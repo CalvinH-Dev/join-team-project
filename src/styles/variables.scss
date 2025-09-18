@@ -10,8 +10,7 @@ html {
 
 	/* Typography Sizes - Mobile First */
 	/* headings */
-	--fs-h1-mobile: 47px;
-	--fs-h1-desktop: 61px;
+	--fs-h1: clamp(2.938rem, 2.657rem + 1.284vw, 3.813rem);
 
 	--fs-h2-mobile: 20px;
 	--fs-h2-desktop: 27px;

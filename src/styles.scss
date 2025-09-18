@@ -1,6 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@use "styles/variables";
+@use "styles/mixins";
+@use "styles/fonts";
+
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+}
+
+h1 {
+	font-weight: bold;
+	font-family: Inter;
+	font-size: var(--fs-h1);
 }

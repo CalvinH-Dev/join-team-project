@@ -7,10 +7,50 @@ html {
 	--color-link: #007cee;
 	--text-color-blue: #2a3647;
 	--text-color-black: #000;
+
+	/* Typography Sizes - Mobile First */
+	/* headings */
+	--fs-h1-mobile: 47px;
+	--fs-h1-desktop: 61px;
+
+	--fs-h2-mobile: 20px;
+	--fs-h2-desktop: 27px;
+
+	--fs-h3-mobile: 28px;
+	--fs-h3-desktop: 47px;
+
+	--fs-h4-mobile: 24px;
+	--fs-h4-desktop: 64px;
+
+	/* text */
+	--fs-text-mobile: 16px;
+	--fs-text-desktop: 20px;
+	--fs-small-mobile: 14px;
+	--fs-small-desktop: 16px;
+
+	/* special typography */
+	--fs-number-text: 64px;
+	--fs-typography-title: 16px;
+	--fs-typography-text: 16px;
+
+	/* inputs */
+	--fs-input-mobile: 16px;
+	--fs-input-desktop: 20px;
+	--fs-button-mobile: 16px;
+	--fs-button-desktop: 21px;
+
+	/* Font Weights */
+	--fw-regular: 400;
+	--fw-medium: 500;
+	--fw-semibold: 600;
+	--fw-bold: 700;
+
+	/* Legacy font sizes for backward compatibility */
+	--fs-extraSmall: 14px;
 	--fs-small: 16px;
 	--fs-medium: 18px;
 	--fs-big: 20px;
-	--fs-h1: 48px;
+	--fs-h1: 47px;
 	--fs-input: 20px;
-	--fs-button: 20px;
+	--fs-button: 21px;
 }

@@ -1,10 +1,13 @@
 import { Component,inject, signal } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { collection, Firestore, onSnapshot } from "@angular/fire/firestore";
+import { Footer } from "./shared/footer/footer";
+import { Header } from "./shared/header/header";
+import { Sidebar } from "./shared/sidebar/sidebar";
 
 @Component({
 	selector: "app-root",
-	imports: [RouterOutlet],
+	imports: [RouterOutlet, Sidebar, Header, Footer],
 	templateUrl: "./app.html",
 	styleUrl: "./app.scss",
 })

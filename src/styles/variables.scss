@@ -11,32 +11,18 @@ html {
 	/* Typography Sizes - Mobile First */
 	/* headings */
 	--fs-h1: clamp(2.938rem, 2.657rem + 1.284vw, 3.813rem);
-
-	--fs-h2-mobile: 20px;
-	--fs-h2-desktop: 27px;
-
-	--fs-h3-mobile: 28px;
-	--fs-h3-desktop: 47px;
-
-	--fs-h4-mobile: 24px;
-	--fs-h4-desktop: 64px;
+	--fs-h2: clamp(1.25rem, 1.181rem + 0.222vw, 1.688rem);
+	--fs-h3: clamp(1.75rem, 1.471rem + 0.868vw, 2.938rem);
+	--fs-h4: clamp(1.5rem, 0.791rem + 2.026vw, 4rem);
 
 	/* text */
-	--fs-text-mobile: 16px;
-	--fs-text-desktop: 20px;
-	--fs-small-mobile: 14px;
-	--fs-small-desktop: 16px;
+	--fs-text: clamp(1rem, 0.977rem + 0.074vw, 1.25rem);
+  	--fs-small: clamp(0.875rem, 0.852rem + 0.074vw, 1rem);
 
-	/* special typography */
-	--fs-number-text: 64px;
-	--fs-typography-title: 16px;
-	--fs-typography-text: 16px;
-
-	/* inputs */
-	--fs-input-mobile: 16px;
-	--fs-input-desktop: 20px;
-	--fs-button-mobile: 16px;
-	--fs-button-desktop: 21px;
+	/* for inputs text */
+	--fs-input: clamp(1rem, 0.977rem + 0.074vw, 1.25rem);
+	/* for button text */
+  	--fs-button: clamp(1rem, 0.953rem + 0.148vw, 1.313rem);
 
 	/* Font Weights */
 	--fw-regular: 400;
@@ -45,6 +31,7 @@ html {
 	--fw-bold: 700;
 
 	/* Legacy font sizes for backward compatibility */
+	/* do not use */
 	--fs-extraSmall: 14px;
 	--fs-small: 16px;
 	--fs-medium: 18px;

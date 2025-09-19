@@ -3,11 +3,10 @@ import { RouterOutlet } from "@angular/router";
 import { Footer } from "./shared/footer/footer";
 import { Header } from "./shared/header/header";
 import { Sidebar } from "./shared/sidebar/sidebar";
-import { AddContact } from "./main/contacts/add-contact/add-contact";
 
 @Component({
 	selector: "app-root",
-	imports: [RouterOutlet, Sidebar, Header, Footer, AddContact],
+	imports: [RouterOutlet, Sidebar, Header, Footer],
 	templateUrl: "./app.html",
 	styleUrl: "./app.scss",
 })

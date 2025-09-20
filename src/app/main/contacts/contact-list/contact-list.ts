@@ -57,7 +57,7 @@ export class ContactList implements OnDestroy {
 			name: data["name"] || "",
 			email: data["email"] || "",
 			telephone: data["telephone"] || "",
-			intials: data["intials"] || "",
+			initials: data["initials"] || "",
 			color: data["color"] || 1,
 		};
 	}

@@ -1,14 +1,9 @@
 import { KeyValuePipe } from "@angular/common";
 import { Component, inject, OnDestroy, output } from "@angular/core";
 import { DocumentData } from "@angular/fire/compat/firestore";
-import {
-	collection,
-	Firestore,
-	onSnapshot,
-	QueryDocumentSnapshot,
-	QuerySnapshot,
-} from "@angular/fire/firestore";
+import { Firestore, QueryDocumentSnapshot, QuerySnapshot } from "@angular/fire/firestore";
 import { Contact } from "app/core/interfaces/contact";
+import { ContactService } from "app/core/services/contact-service";
 
 type ContactDictionary = Record<string, Contact[]>;
 
@@ -20,8 +15,10 @@ type ContactDictionary = Record<string, Contact[]>;
 })
 export class ContactList implements OnDestroy {
 	db = inject(Firestore);
+	contactService = inject(ContactService);
 
 	contacts: Contact[] = [];
+	contacts$: any;
 	unsubscribeContacts = () => {
 		/* empty */
 	};
@@ -31,8 +28,28 @@ export class ContactList implements OnDestroy {
 	contactSelected = output<string>();
 
 	constructor() {
-		const aCollection = collection(this.db, "contacts");
-		this.unsubscribeContacts = onSnapshot(aCollection, this.getDocuments);
+		this.contacts$ = this.contactService.getContacts();
+		this.contacts$.subscribe((contacts: any) => {
+			console.log(contacts);
+			this.contacts = [];
+			this.contacts = contacts;
+			this.createLexObject();
+		});
+	}
+
+	createLexObject() {
+		this.lexObject = {};
+		this.contacts.forEach((obj) => {
+			const firstLetter: string = obj.name.trim().charAt(0);
+
+			if (!firstLetter) return;
+
+			if (!this.lexObject[firstLetter]) {
+				this.lexObject[firstLetter] = [];
+			}
+
+			this.lexObject[firstLetter].push(obj);
+		});
 	}
 
 	getDocuments = (docs: QuerySnapshot<DocumentData, DocumentData>) => {

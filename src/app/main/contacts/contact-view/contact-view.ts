@@ -1,6 +1,12 @@
 import { Component, OnDestroy, inject } from "@angular/core";
 // import { ActivatedRoute } from '@angular/router';
-import { Firestore, collection, onSnapshot, DocumentData, QuerySnapshot } from "@angular/fire/firestore";
+import {
+	DocumentData,
+	Firestore,
+	QuerySnapshot,
+	collection,
+	onSnapshot,
+} from "@angular/fire/firestore";
 import { Contact } from "../../../core/interfaces/contact";
 
 @Component({
@@ -17,9 +23,9 @@ export class ContactView implements OnDestroy {
 	unsubscribe: (() => void) | null = null;
 
 	constructor() {
+		console.log("hey");
 		const contactsCol = collection(this.firestore, "contacts");
 
-		
 		this.unsubscribe = onSnapshot(contactsCol, (snapshot: QuerySnapshot<DocumentData>) => {
 			const contacts: Contact[] = [];
 
@@ -42,7 +48,6 @@ export class ContactView implements OnDestroy {
 		});
 	}
 
-	
 	ngOnDestroy() {
 		this.unsubscribe?.();
 	}

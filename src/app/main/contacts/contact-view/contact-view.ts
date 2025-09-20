@@ -10,7 +10,7 @@ import { Contact } from "../../../core/interfaces/contact";
 })
 export class ContactView implements OnDestroy {
 	contactData?: Contact;
-	intials = "";
+	initials = "";
 	color = "";
 
 	firestore = inject(Firestore);
@@ -29,14 +29,14 @@ export class ContactView implements OnDestroy {
 					name: doc.data()["name"] || "",
 					email: doc.data()["email"] || "",
 					telephone: doc.data()["telephone"] || "",
-					intials: doc.data()["intials"] || "",
+					initials: doc.data()["initials"] || "",
 					// color: doc.data()["color"]?.toString() || "#ff8c00",
 				});
 			});
 
 			if (contacts.length > 0) {
 				this.contactData = contacts[0];
-				this.intials = this.contactData.intials || "";
+				this.initials = this.contactData.initials || "";
 				// this.color = this.contactData.color?.toString() || "#ff8c00";
 			}
 		});

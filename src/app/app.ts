@@ -1,9 +1,11 @@
-import { Component,inject, signal } from "@angular/core";
+import { Component, signal } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { collection, Firestore, onSnapshot } from "@angular/fire/firestore";
+// import { collection, Firestore, onSnapshot } from "@angular/fire/firestore";
 import { Footer } from "./shared/footer/footer";
 import { Header } from "./shared/header/header";
 import { Sidebar } from "./shared/sidebar/sidebar";
+
+
 
 @Component({
 	selector: "app-root",
@@ -14,17 +16,17 @@ import { Sidebar } from "./shared/sidebar/sidebar";
 export class App {
 	protected readonly title = signal("join");
 
-	 db = inject(Firestore);
+	//  db = inject(Firestore);
 	
 	constructor() {
-		const items = collection(this.db, "contact");
+		// const items = collection(this.db, "contacts");
 
-		const snapshots = onSnapshot(items, (contact) => {
-			contact.forEach((contacts) => {
-				console.log(contacts.data());				
-			});
-		});
-		console.log(items);
+		// const snapshots = onSnapshot(items, (contact) => {
+		// 	contact.forEach((contacts) => {
+		// 		console.log(contacts.data());				
+		// 	});
+		// });
+		// console.log(items);
 		
 	}
 }

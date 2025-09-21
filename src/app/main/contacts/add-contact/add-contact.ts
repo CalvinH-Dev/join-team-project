@@ -21,7 +21,7 @@ export class AddContact {
       email: ['', [
         Validators.required,
         Validators.email,
-        Validators.pattern(/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/)
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
       ]],
       phone: ['', [
         Validators.required,

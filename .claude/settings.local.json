@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(firebase --version)",
+      "Bash(mkdir:*)",
+      "Bash(firebase projects:list:*)",
+      "Bash(firebase use:*)",
+      "Bash(firebase init:*)",
+      "Bash(printf \"Y\\n\\n\\n\\n\")",
+      "Bash(firebase apps:sdkconfig:*)",
+      "Bash(firebase projects:create:*)",
+      "Bash(firebase apps:create:*)",
+      "Bash(tree:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

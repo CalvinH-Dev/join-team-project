@@ -4,11 +4,12 @@
 	<hr class="title-underline" />
 </div>
 
-@if (contactData; as contact) {
+@if (contactService.contactForView; as contact) {
+	@let contact = contactService.contactForView;
 	<div class="contact-card">
 		<div class="contact-header">
-			<div class="initials" [style.background-color]="color">
-				{{ initials }}
+			<div class="initials" [style.background-color]="contact.color">
+				{{ contact.initials }}
 			</div>
 			<h2 class="contact-name">{{ contact.name }}</h2>
 		</div>

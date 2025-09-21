@@ -1,66 +1,93 @@
-import { inject, Injectable } from "@angular/core";
+import { inject, Injectable, OnDestroy } from "@angular/core";
 import { DocumentData } from "@angular/fire/compat/firestore";
 import {
 	collection,
 	collectionData,
-	docData,
+	doc,
 	Firestore,
 	onSnapshot,
 	QuerySnapshot,
 } from "@angular/fire/firestore";
-import { doc } from "firebase/firestore";
 import { Contact } from "../interfaces/contact";
+
+type ContactDictionary = Record<string, Contact[]>;
 
 @Injectable({
 	providedIn: "root",
 })
-export class ContactService {
+export class ContactService implements OnDestroy {
 	firestore = inject(Firestore);
 
-	contacts: Contact[] = [];
-	unsubscribe: (() => void) | null = null;
+	contactForView: Contact | undefined;
+	contactsObject: ContactDictionary = {};
+	unsubscribeContactsObject: (() => void) | null = null;
+	unsubscribeContactForView: (() => void) | null = null;
 
 	constructor() {
-		const contactsCol = collection(this.firestore, "contacts");
-
-		this.unsubscribe = onSnapshot(contactsCol, (snapshot: QuerySnapshot<DocumentData>) => {
-			this.contacts = [];
-
-			snapshot.forEach((doc) => {
-				this.contacts.push({
-					id: doc.id,
-					name: doc.data()["name"] || "",
-					email: doc.data()["email"] || "",
-					telephone: doc.data()["telephone"] || "",
-					initials: doc.data()["initials"] || "",
-					color: doc.data()["color"] || 1,
-				});
-			});
-		});
+		this.getContactsAsObject();
 	}
 
-	getContacts() {
+	getContactsAsObject() {
 		const contactsCol = collection(this.firestore, "contacts");
+
+		this.unsubscribeContactsObject = onSnapshot(
+			contactsCol,
+			(snapshot: QuerySnapshot<DocumentData>) => {
+				this.contactsObject = {};
+
+				const contacts: Contact[] = [];
+
+				snapshot.forEach((doc) => {
+					contacts.push(this.buildDocument(doc.id, doc.data()));
+				});
+				console.log(contacts);
+				this.createLexObject(contacts);
+				console.log(this.contactsObject);
+			},
+		);
+
 		return collectionData(contactsCol, { idField: "id" });
 	}
 
 	getDocumentById(contactId: string) {
-		const docRef = doc(this.firestore, "contacts", contactId);
-		return docData(docRef, { idField: "id" });
-		// const docSnap = await getDoc(docRef);
+		const contact = doc(this.firestore, "contacts", contactId);
+		this.unsubscribeContactForView = onSnapshot(contact, (snapshot) => {
+			if (snapshot.exists()) {
+				this.contactForView = this.buildDocument(snapshot.id, snapshot.data());
+			} else {
+				this.contactForView = undefined;
+			}
+		});
+	}
 
-		// if (docSnap.exists()) {
-		// 	const docObj = {
-		// 		id: docSnap.id,
-		// 		name: docSnap.data()?.["name"] || "",
-		// 		email: docSnap.data()?.["email"] || "",
-		// 		telephone: docSnap.data()?.["telephone"] || "",
-		// 		initials: docSnap.data()?.["initials"] || "",
-		// 		color: docSnap.data()?.["color"] || 1,
-		// 	};
-		// 	return docObj;
-		// } else {
-		// 	return { id: docSnap.id, name: "", email: "", telephone: "", initials: "", color: 1 };
-		// }
+	private createLexObject(contactsArr: Contact[]) {
+		this.contactsObject = {};
+		contactsArr.forEach((obj) => {
+			const firstLetter: string = obj.name.trim().charAt(0);
+
+			if (!firstLetter) return;
+
+			if (!this.contactsObject[firstLetter]) {
+				this.contactsObject[firstLetter] = [];
+			}
+
+			this.contactsObject[firstLetter].push(obj);
+		});
+	}
+
+	private buildDocument(id: string, data: DocumentData): Contact {
+		return {
+			id,
+			name: data["name"] || "",
+			email: data["email"] || "",
+			telephone: data["telephone"] || "",
+			initials: data["initials"] || "",
+			color: data["color"] || 1,
+		};
+	}
+
+	ngOnDestroy() {
+		this.unsubscribeContactForView?.();
+		this.unsubscribeContactsObject?.();
 	}
 }

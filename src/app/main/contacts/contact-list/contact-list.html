@@ -1,5 +1,5 @@
 <div class="all-contacts">
-	@for (item of lexObject | keyvalue; track $index) {
+	@for (item of contactService.contactsObject | keyvalue; track $index) {
 		@let letter = item.key;
 		@let contactsForLetter = item.value;
 		<div class="letter-container">

@@ -2,9 +2,9 @@
 
 main {
 	padding-inline: clamp(0.75rem, 0.214rem + 2.679vw, 1.5rem);
+	padding-top: var(--header-height);
 
 	@include mixins.desktop {
 		padding-left: var(--padding-left-desktop);
-		padding-top: var(--header-height);
 	}
 }

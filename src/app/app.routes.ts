@@ -5,7 +5,7 @@ import { Board } from "./main/board/board";
 import { Contacts } from "./main/contacts/contacts";
 
 export const routes: Routes = [
-  { path: "", redirectTo: "summary", pathMatch: "full" },
+  { path: "", component: Summary},
   { path: "summary", component: Summary },
   { path: "add-task", component: AddTask },
   { path: "board", component: Board },

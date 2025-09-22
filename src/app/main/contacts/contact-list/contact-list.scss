@@ -1,7 +1,32 @@
+@use "../../../../styles/mixins";
+
 :host {
 	display: block;
 	height: 100%;
 	width: 100%;
+	grid-column: 1;
+	grid-row: 1;
+
+	@include mixins.desktop {
+		grid-column: revert;
+		grid-row: revert;
+	}
+}
+
+:host.mobile-d-none {
+	display: none;
+
+	@include mixins.desktop {
+		display: revert;
+	}
+}
+
+.list {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .all-contacts {

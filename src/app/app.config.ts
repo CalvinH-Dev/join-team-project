@@ -7,7 +7,7 @@ import { provideRouter } from "@angular/router";
 
 import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
-import { firebaseConfig } from "environment/environment";
+import { environment } from "../environments/environment";
 import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
 		provideBrowserGlobalErrorListeners(),
 		provideZoneChangeDetection({ eventCoalescing: true }),
 		provideRouter(routes),
-		provideFirebaseApp(() => initializeApp(firebaseConfig)),
+		provideFirebaseApp(() => initializeApp(environment.firebase)),
 		provideFirestore(() => getFirestore()),
 	],
 };

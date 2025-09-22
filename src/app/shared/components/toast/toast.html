@@ -1,5 +1,35 @@
-<div class="toast toast--success">
-  <div class="toast__content">
-    <span class="toast__message">Contact successfully created</span>
+@if (visible()) {
+  <div [class]="toastClasses()" [@slideIn]>
+    <div class="toast__content">
+      @if (icon) {
+        <img class="toast__icon" [src]="icon" [alt]="type + ' icon'">
+      }
+
+      <div class="toast__body">
+        @if (title) {
+          <div class="toast__title">{{ title }}</div>
+        }
+        <span class="toast__message">{{ message }}</span>
+      </div>
+
+      @if (showCloseButton) {
+        <button
+          type="button"
+          class="toast__close"
+          (click)="close()"
+          aria-label="Close notification">
+          <img src="/images/assets/close_cross.svg" alt="Close">
+        </button>
+      }
+
+      @if (action) {
+        <button
+          type="button"
+          class="toast__action"
+          (click)="handleAction()">
+          {{ action.label }}
+        </button>
+      }
+    </div>
   </div>
-</div>
+}

@@ -1,1 +1,50 @@
-<p>input-field works!</p>
+<div class="input-wrapper">
+  @if (label) {
+    <label class="input__label" [for]="inputId()">
+      {{ label }}
+      @if (required) {
+        <span class="input__label--required">*</span>
+      }
+    </label>
+  }
+
+  <div class="input__container">
+    @if (icon) {
+      <img class="input__icon" [src]="icon" [alt]="label || 'Icon'">
+    }
+
+    <input
+      [id]="inputId()"
+      [type]="type"
+      [class]="inputClasses()"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      [required]="required"
+      [(ngModel)]="value"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+      (input)="onInput($event)">
+
+    @if (type === 'password' && showPasswordToggle) {
+      <button
+        type="button"
+        class="input__toggle"
+        (click)="togglePasswordVisibility()">
+        <img [src]="passwordVisible() ? '/images/assets/hide-icon.svg' : '/images/assets/show-icon.svg'" alt="Toggle password">
+      </button>
+    }
+  </div>
+
+  @if (errorMessage && hasError()) {
+    <div class="input__error">
+      <img src="/images/assets/error-icon.svg" alt="Error">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (helperText && !hasError()) {
+    <div class="input__helper">
+      {{ helperText }}
+    </div>
+  }
+</div>

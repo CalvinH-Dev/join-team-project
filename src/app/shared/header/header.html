@@ -1,6 +1,51 @@
-<p>header works!</p>
-<div> <h1> testH1 </h1> </div>
-<div> <h2> testH2 </h2> </div>
-<div> <h3> testH3 </h3> </div>
-<div> <h4> testH4 </h4> </div>
-<input placeholder="test input"> 
+<header>
+  <h1>Join - Components Test</h1>
+
+  <!-- Test unsere neuen Components -->
+  <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+
+    <!-- Button Tests -->
+    <div>
+      <h2>Buttons:</h2>
+      <app-button
+        variant="primary"
+        icon="/images/add_contacts_section/person_icon.svg"
+        (clickEvent)="onAddContact()">
+        Add new contact
+      </app-button>
+
+      <app-button variant="secondary" style="margin-left: 10px;">
+        Secondary Button
+      </app-button>
+    </div>
+
+    <!-- Input Tests -->
+    <div>
+      <h2>Input Fields:</h2>
+      <app-input-field
+        label="Email"
+        type="email"
+        icon="/images/add_contacts_section/mail.svg"
+        placeholder="wolf@gmail.com">
+      </app-input-field>
+
+      <app-input-field
+        label="Phone"
+        type="tel"
+        icon="/images/add_contacts_section/call_icon.svg"
+        placeholder="+49 2222 222 22 2">
+      </app-input-field>
+    </div>
+
+    <!-- Toast Test -->
+    <div>
+      <h2>Toast:</h2>
+      <app-toast
+        type="success"
+        message="Contact successfully created"
+        [showCloseButton]="true">
+      </app-toast>
+    </div>
+
+  </div>
+</header> 

@@ -11,7 +11,14 @@
       "Bash(firebase apps:sdkconfig:*)",
       "Bash(firebase projects:create:*)",
       "Bash(firebase apps:create:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(ng build)",
+      "Bash(ng serve)",
+      "Bash(ng serve:*)",
+      "Bash(git merge:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,7 +1,9 @@
 <div class="main_mobile">
 	<div class="content_mobile">
 		<div class="up">
-			<div class="close">x</div>
+			<div class="close" (click)="closeOverlay()">
+        <img src="./images/assets/close_mobile.svg" alt="">
+      </div>
 			<div class="head">
 				<h2>Add contact</h2>
 				<span>Tasks are better with a team!</span>
@@ -50,7 +52,10 @@
 					</span>
 				</div>
 
-				<button type="submit" [disabled]="contactForm.invalid">Create contact ✓</button>
+				<button type="submit" [disabled]="contactForm.invalid">
+          Create contact
+          <img src="./images/assets/check.svg" alt="">
+        </button>
 			</form>
 		</div>
 	</div>
@@ -61,11 +66,11 @@
 
       <div class="left">
         <div class="head">
-          <img class="logo" src="./public/images/join_logo/join_logo.svg" alt="">
+          <img class="logo" src="./images/join_logo/join_logo.svg" alt="">
           <h2>Add contact</h2>
           <span>Tasks are better with a team!</span>
+          <div class="blueline"></div>
         </div>
-        <div class="blueline"></div>
       </div>
 
 
@@ -110,7 +115,15 @@
           </span>
         </div>
 
-        <button type="submit" [disabled]="contactForm.invalid">Create contact ✓</button>
+        <button type="submit" [disabled]="contactForm.invalid">
+          Create contact
+          <img src="./images/assets/check.svg" alt="">
+        </button>
+        <button class="close_overlay" type="button" (click)="closeOverlay()">
+          Cancel
+          <img src="./images/assets/close_cross.svg" alt="x">
+        </button>
+
       </form>
     </div>
   </div>

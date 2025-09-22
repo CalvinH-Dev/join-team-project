@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router';
 })
 export class AddContact {
    contactForm: FormGroup;
+   isOverlayOpen = false;
 
   constructor(private fb: FormBuilder) {
     this.contactForm = this.fb.group({
@@ -30,12 +31,23 @@ export class AddContact {
     });
   }
 
-  onSubmit() {
+   onSubmit() {
     if (this.contactForm.valid) {
       console.log(this.contactForm.value);
       alert('Kontakt erfolgreich erstellt!');
       this.contactForm.reset();
+      this.closeOverlay();
     }
   }
+
+
+  closeOverlay() {
+    this.isOverlayOpen = false;
+  }
+
+  openOverlay() {
+    this.isOverlayOpen = true;
+  }
+
 }
 

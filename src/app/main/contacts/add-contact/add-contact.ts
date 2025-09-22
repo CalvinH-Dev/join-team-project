@@ -40,7 +40,6 @@ export class AddContact {
     }
   }
 
-
   closeOverlay() {
     this.isOverlayOpen = false;
   }

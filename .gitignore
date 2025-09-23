@@ -41,4 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Claude Code settings
+.claude/settings.local.json
+src/.claude/settings.local.json
+
 /src/environment/environment.ts

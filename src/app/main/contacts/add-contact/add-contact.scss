@@ -1,3 +1,6 @@
+@use "../../../.././/styles/mixins.scss";
+
+
 * {
 	font-family: Inter, sans-serif;
 }
@@ -249,7 +252,7 @@
 	}
 }
 
-@media (min-width: 768px) {
+@include mixins.desktop {
 	.main_mobile {
 		display: none;
 	}

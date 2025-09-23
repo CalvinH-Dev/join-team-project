@@ -2,10 +2,11 @@ import { Component, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ContactList } from "./contact-list/contact-list";
 import { ContactView } from "./contact-view/contact-view";
+import { AddContact } from "./add-contact/add-contact";
 
 @Component({
 	selector: "app-contacts",
-	imports: [ContactList, ContactView],
+	imports: [ContactList, ContactView, AddContact],
 	templateUrl: "./contacts.html",
 	styleUrl: "./contacts.scss",
 })

@@ -53,7 +53,7 @@ span {
 		position: fixed;
 		top: 0;
 		left: 0;
-		width: min(var(--footer-width-desktop));
+		width: var(--footer-width-desktop);
 		height: 100vh;
 		flex-direction: column;
 		justify-content: flex-start;

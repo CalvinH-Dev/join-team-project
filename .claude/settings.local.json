@@ -18,7 +18,10 @@
       "Bash(git merge:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git fetch:*)",
+      "WebFetch(domain:angular.dev)",
+      "Read(//c/Users/phill/Downloads/**)"
     ],
     "deny": [],
     "ask": []

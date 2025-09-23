@@ -1,8 +1,8 @@
 .input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  gap: 8px; // Match AddContact gap
+  margin-bottom: 8px; // Match AddContact form gap
 
   &:last-child {
     margin-bottom: 0;
@@ -106,6 +106,33 @@
   padding-left: 1rem;
 }
 
+// Input with icon inside (AddContacts style) - Exact match
+.input__field--icon-inside {
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 8px 8px 8px 12px;
+  font-size: var(--fs-input);
+  font-weight: var(--fw-regular);
+  outline: none;
+  color: #374151;
+  background: #fff;
+  width: 250px;
+  cursor: pointer;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #d1d5db; // Keep same as original AddContact
+  }
+
+  &.input__field--error {
+    border-color: #dc3545;
+  }
+}
+
 // Different sizes
 .input__field--small {
   padding: 0.5rem 0.875rem 0.5rem 2.75rem;
@@ -119,15 +146,13 @@
   min-height: 52px;
 }
 
-// Error message
+// Error message - AddContact style
 .input__error {
-  font-family: Inter, sans-serif;
-  font-size: var(--fs-small);
-  color: #dc3545;
-  margin-top: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
+  color: red; // Exact match to AddContact
+
+  span {
+    font-size: 14px; // Exact match to AddContact
+  }
 }
 
 // Helper text
@@ -159,20 +184,45 @@
   }
 }
 
-// Contact specific styling
+// Contact form specific styling - Match AddContact exactly
 .contact-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  gap: 16px; // More spacing like in mockup
+
   .input-wrapper {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0; // Remove default margins
+    width: 100%;
   }
 
-  .input__field {
-    background-color: #fafafa;
-    border-color: #e5e7eb;
+  .input__field--icon-inside {
+    width: 250px; // Mobile width from AddContact
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px 16px;
+    background: #fff;
+
+    @media (min-width: 601px) {
+      width: 300px; // Wider desktop width like mockup
+      padding: 12px 16px;
+    }
 
     &:focus {
-      background-color: var(--bg-color-white);
-      border-color: var(--bg-color-blue-lighter);
+      border-color: #29abef;
+      outline: none;
     }
+  }
+
+  // Button container for side-by-side layout
+  .button-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    justify-content: center;
+    width: 100%;
   }
 }
 

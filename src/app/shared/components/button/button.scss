@@ -37,6 +37,41 @@
     }
   }
 
+  // FAB button - Floating Action Button for mobile
+  &--fab {
+    background-color: var(--bg-color-blue-darker);
+    color: var(--bg-color-white);
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    min-height: 56px;
+    padding: 0;
+    box-shadow: 0 4px 12px rgba(42, 54, 71, 0.3);
+
+    &:hover:not(:disabled) {
+      background-color: #1e2832;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(42, 54, 71, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(42, 54, 71, 0.2);
+    }
+
+    // Hide text for FAB buttons
+    .btn__text {
+      display: none;
+    }
+
+    // Center icon perfectly
+    .btn__icon {
+      margin: 0;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
   &--success {
     background: #2a3647;
     color: #fff;

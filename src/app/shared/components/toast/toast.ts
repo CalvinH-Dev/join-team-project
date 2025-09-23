@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, computed, signal, OnInit, OnDestroy } from '@angular/core';
+import { Button } from '../button/button';
 
 export interface ToastAction {
   label: string;
@@ -7,7 +8,7 @@ export interface ToastAction {
 
 @Component({
   selector: 'app-toast',
-  imports: [],
+  imports: [Button],
   templateUrl: './toast.html',
   styleUrl: './toast.scss'
 })

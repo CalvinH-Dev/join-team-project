@@ -9,21 +9,24 @@
   }
 
   <div class="input__container">
-    @if (icon) {
+    @if (icon && !showIconInside) {
       <img class="input__icon" [src]="icon" [alt]="label || 'Icon'">
     }
 
     <input
       [id]="inputId()"
-      [type]="type"
+      [type]="type === 'password' && passwordVisible() ? 'text' : type"
       [class]="inputClasses()"
       [placeholder]="placeholder"
       [disabled]="disabled"
       [required]="required"
-      [(ngModel)]="value"
+      [ngStyle]="inputStyles()"
+      [(ngModel)]="internalValue"
       (blur)="onBlur()"
       (focus)="onFocus()"
-      (input)="onInput($event)">
+      (input)="onInput($event)"
+      (keydown)="onKeyDown($event)"
+      (keyup)="onKeyUp($event)">
 
     @if (type === 'password' && showPasswordToggle) {
       <button
@@ -35,10 +38,15 @@
     }
   </div>
 
-  @if (errorMessage && hasError()) {
+  @if (hasError()) {
     <div class="input__error">
-      <img src="/images/assets/error-icon.svg" alt="Error">
-      {{ errorMessage }}
+      @if (errorMessage) {
+        {{ errorMessage }}
+      } @else if (validationErrors().length > 0) {
+        @for (error of validationErrors(); track error) {
+          <span>{{ error }}</span>
+        }
+      }
     </div>
   }
 

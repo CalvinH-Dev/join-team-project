@@ -13,22 +13,22 @@
       </div>
 
       @if (showCloseButton) {
-        <button
-          type="button"
-          class="toast__close"
-          (click)="close()"
+        <app-button
+          variant="ghost"
+          size="small"
+          icon="/images/assets/close_cross.svg"
+          (clickEvent)="close()"
           aria-label="Close notification">
-          <img src="/images/assets/close_cross.svg" alt="Close">
-        </button>
+        </app-button>
       }
 
       @if (action) {
-        <button
-          type="button"
-          class="toast__action"
-          (click)="handleAction()">
+        <app-button
+          variant="primary"
+          size="small"
+          (clickEvent)="handleAction()">
           {{ action.label }}
-        </button>
+        </app-button>
       }
     </div>
   </div>

@@ -1,6 +1,5 @@
 import { KeyValuePipe } from "@angular/common";
-import { Component, inject, output } from "@angular/core";
-import { Firestore } from "@angular/fire/firestore";
+import { Component, EventEmitter, inject, Output, output } from "@angular/core";
 import { Router } from "@angular/router";
 import { ContactService } from "app/core/services/contact-service";
 import { Button } from "../../../shared/components/button/button";
@@ -12,9 +11,15 @@ import { Button } from "../../../shared/components/button/button";
 	styleUrl: "./contact-list.scss",
 })
 export class ContactList {
-	db = inject(Firestore);
 	contactService = inject(ContactService);
 	router = inject(Router);
+
+	@Output() addContactClicked = new EventEmitter<void>();
+
+	openAddContact() {
+		this.addContactClicked.emit();
+	}
+
 
 	contactSelected = output<string>();
 

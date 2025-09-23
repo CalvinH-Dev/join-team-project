@@ -7,7 +7,7 @@ import { Component, Input, Output, EventEmitter, computed } from '@angular/core'
   styleUrl: './button.scss'
 })
 export class Button {
-  @Input() variant: 'primary' | 'secondary' | 'edit' | 'delete' | 'success' | 'cancel' | 'ghost' = 'primary';
+  @Input() variant: 'primary' | 'fab' | 'secondary' | 'edit' | 'delete' | 'success' | 'cancel' | 'ghost' = 'primary';
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() icon?: string;
   @Input() iconAlt?: string;

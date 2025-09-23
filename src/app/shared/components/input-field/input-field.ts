@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-input-field',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './input-field.html',
   styleUrl: './input-field.scss'
 })
@@ -18,6 +19,7 @@ export class InputField {
   @Input() helperText?: string;
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() showPasswordToggle = true;
+  @Input() showIconInside = false;
 
   @Output() valueChange = new EventEmitter<string>();
   @Output() blur = new EventEmitter<void>();
@@ -28,6 +30,16 @@ export class InputField {
   protected passwordVisible = signal(false);
   protected isFocused = signal(false);
   protected hasError = signal(false);
+
+  // Internal value for ngModel binding
+  get internalValue(): string {
+    return this.value();
+  }
+
+  set internalValue(val: string) {
+    this.value.set(val);
+    this.valueChange.emit(val);
+  }
 
   // Computed properties
   protected inputId = computed(() => `input-${Math.random().toString(36).substr(2, 9)}`);
@@ -48,6 +60,24 @@ export class InputField {
     }
 
     return classes.join(' ');
+  });
+
+  protected inputStyles = computed(() => {
+    return {};
+  });
+
+  protected validationErrors = computed(() => {
+    const errors: string[] = [];
+
+    if (this.required && !this.value().trim()) {
+      errors.push('This field is required');
+    }
+
+    if (this.type === 'email' && this.value() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value())) {
+      errors.push('Please enter a valid email address');
+    }
+
+    return errors;
   });
 
   onInput(event: Event): void {
@@ -106,5 +136,13 @@ export class InputField {
 
   getValue(): string {
     return this.value();
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    // Handle key down events if needed
+  }
+
+  onKeyUp(event: KeyboardEvent): void {
+    // Handle key up events if needed
   }
 }

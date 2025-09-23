@@ -1,51 +1,13 @@
 <header>
-  <h1>Join - Components Test</h1>
-
-  <!-- Test unsere neuen Components -->
-  <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
-
-    <!-- Button Tests -->
-    <div>
-      <h2>Buttons:</h2>
-      <app-button
-        variant="primary"
-        icon="/images/add_contacts_section/person_icon.svg"
-        (clickEvent)="onAddContact()">
-        Add new contact
-      </app-button>
-
-      <app-button variant="secondary" style="margin-left: 10px;">
-        Secondary Button
-      </app-button>
-    </div>
-
-    <!-- Input Tests -->
-    <div>
-      <h2>Input Fields:</h2>
-      <app-input-field
-        label="Email"
-        type="email"
-        icon="/images/add_contacts_section/mail.svg"
-        placeholder="wolf@gmail.com">
-      </app-input-field>
-
-      <app-input-field
-        label="Phone"
-        type="tel"
-        icon="/images/add_contacts_section/call_icon.svg"
-        placeholder="+49 2222 222 22 2">
-      </app-input-field>
-    </div>
-
-    <!-- Toast Test -->
-    <div>
-      <h2>Toast:</h2>
-      <app-toast
-        type="success"
-        message="Contact successfully created"
-        [showCloseButton]="true">
-      </app-toast>
-    </div>
-
-  </div>
+	<img class="logo" src="images/join_logo/join_logo_v2svg.svg" alt="" width="32" />
+	<span class="desktop-title">Kanban Management Tool</span>
+	<div class="interactives">
+		<a routerLink="/contacts" class="nav-link">Contacts</a>
+		<img class="help" src="images/assets/help_icon.svg" alt="" />
+		<app-button variant="ghost" (clickEvent)="onProfileClick()">
+			<div class="profile-picture">
+				<span>SV</span>
+			</div>
+		</app-button>
+	</div>
 </header>

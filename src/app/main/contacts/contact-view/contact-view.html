@@ -24,5 +24,12 @@
 				{{ contact.telephone }}
 			</p>
 		</div>
+
+		<!-- Contact Menu Button (Mobile Only) -->
+		<app-contact-menu
+			[contactId]="contact.id"
+			(editClicked)="onEditContact($event)"
+			(deleteClicked)="onDeleteContact($event)">
+		</app-contact-menu>
 	</div>
 }

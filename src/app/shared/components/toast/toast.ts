@@ -26,6 +26,7 @@ export class Toast implements OnInit, OnDestroy {
 
   // Angular 20 signals
   protected visible = signal(true);
+  protected leaving = signal(false);
 
   private timeoutId?: number;
 
@@ -33,6 +34,11 @@ export class Toast implements OnInit, OnDestroy {
   protected toastClasses = computed(() => {
     const classes = ['toast'];
     classes.push(`toast--${this.type}`);
+
+    if (this.leaving()) {
+      classes.push('toast--leaving');
+    }
+
     return classes.join(' ');
   });
 
@@ -52,8 +58,13 @@ export class Toast implements OnInit, OnDestroy {
   }
 
   close(): void {
-    this.visible.set(false);
-    this.closeEvent.emit();
+    this.leaving.set(true);
+
+    // Wait for animation to complete before hiding
+    setTimeout(() => {
+      this.visible.set(false);
+      this.closeEvent.emit();
+    }, 600); // Animation duration
   }
 
   handleAction(): void {

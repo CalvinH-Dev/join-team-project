@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, computed, EventEmitter, Input, Output } from "@angular/core";
 
 @Component({
 	selector: "app-button",
@@ -15,7 +15,8 @@ export class Button {
 		| "delete"
 		| "success"
 		| "cancel"
-		| "ghost" = "primary";
+		| "ghost"
+		| "contact-menu" = "primary";
 	@Input() size: "small" | "medium" | "large" = "medium";
 	@Input() icon?: string;
 	@Input() iconAlt?: string;

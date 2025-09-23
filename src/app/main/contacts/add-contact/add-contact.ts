@@ -21,6 +21,7 @@ export class AddContact {
 	isOverlayOpen = false;
 
 	@Output() closed = new EventEmitter<void>();
+	@Output() open = new EventEmitter<void>();
 
 	constructor(private fb: FormBuilder) {
 		this.contactForm = this.fb.group({
@@ -52,6 +53,11 @@ export class AddContact {
 	closeOverlay() {
 		this.closed.emit();
 	}
+
+	openOverlay() {
+		this.open.emit();
+	}
+
 	onAddContact(): void {
 		console.log("Add contact clicked!");
 		// This can open the form or do other actions
@@ -81,13 +87,5 @@ export class AddContact {
 
 	onCancelClick() {
 		this.closeOverlay();
-	}
-
-	closeOverlay() {
-		this.isOverlayOpen = false;
-	}
-
-	openOverlay() {
-		this.isOverlayOpen = true;
 	}
 }

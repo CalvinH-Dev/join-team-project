@@ -1,12 +1,12 @@
-import { Component, signal, inject, effect } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 // import { collection, Firestore, onSnapshot } from "@angular/fire/firestore";
-import { Footer } from "./shared/footer/footer";
-import { Header } from "./shared/header/header";
-import { Sidebar } from "./shared/sidebar/sidebar";
 import { AddContact } from "./main/contacts/add-contact/add-contact";
 import { Toast } from "./shared/components/toast/toast";
+import { Footer } from "./shared/footer/footer";
+import { Header } from "./shared/header/header";
 import { ToastService } from "./shared/services/toast.service";
+import { Sidebar } from "./shared/sidebar/sidebar";
 
 @Component({
 	selector: "app-root",

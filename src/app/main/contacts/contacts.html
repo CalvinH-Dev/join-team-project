@@ -1,4 +1,7 @@
 <section>
-	<app-contact-list [class.mobile-d-none]="!showList" />
+	<app-contact-list [class.mobile-d-none]="!showList" (addContactClicked)="onAddContactClicked()"/>
 	<app-contact-view [id]="id" [class.mobile-d-none]="showList" />
+  @if (isAddContactOpen) {
+    <app-add-contact (closed)="onAddContactClosed()" />
+  }
 </section>

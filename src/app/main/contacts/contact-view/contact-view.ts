@@ -5,8 +5,8 @@ import { ContactMenu } from "@shared/components/contact-menu/contact-menu";
 import { ContactService } from "app/core/services/contact-service";
 
 @Component({
-	selector: "app-contact-view",
 	imports: [ContactMenu],
+	selector: "app-contact-view",
 	templateUrl: "./contact-view.html",
 	styleUrls: ["./contact-view.scss"],
 })

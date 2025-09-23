@@ -3,6 +3,7 @@ import { Component, EventEmitter, inject, Output, output } from "@angular/core";
 import { Router } from "@angular/router";
 import { ContactService } from "app/core/services/contact-service";
 import { Button } from "../../../shared/components/button/button";
+import { ToastService } from "../../../shared/services/toast.service";
 
 @Component({
 	selector: "app-contact-list",
@@ -13,6 +14,7 @@ import { Button } from "../../../shared/components/button/button";
 export class ContactList {
 	contactService = inject(ContactService);
 	router = inject(Router);
+	toastService = inject(ToastService);
 
 	@Output() addContactClicked = new EventEmitter<void>();
 
@@ -29,7 +31,13 @@ export class ContactList {
 
 	onAddNewContact() {
 		console.log('Add new contact clicked!');
-		// Navigate to add contact or open modal
+
+		// Test: Show toast animation
+		this.toastService.showSuccess(
+			'contact successfully created'
+		);
+
+		// TODO: This will later trigger the actual add contact functionality
 		// this.router.navigate(["/contacts/add"]);
 	}
 }

@@ -3,10 +3,11 @@ import { Component, inject, output } from "@angular/core";
 import { Firestore } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 import { ContactService } from "app/core/services/contact-service";
+import { Button } from "../../../shared/components/button/button";
 
 @Component({
 	selector: "app-contact-list",
-	imports: [KeyValuePipe],
+	imports: [KeyValuePipe, Button],
 	templateUrl: "./contact-list.html",
 	styleUrl: "./contact-list.scss",
 })
@@ -20,5 +21,11 @@ export class ContactList {
 	onContactSelect(id: string | undefined) {
 		if (!id) return;
 		this.router.navigate(["/contacts", id]);
+	}
+
+	onAddNewContact() {
+		console.log('Add new contact clicked!');
+		// Navigate to add contact or open modal
+		// this.router.navigate(["/contacts/add"]);
 	}
 }

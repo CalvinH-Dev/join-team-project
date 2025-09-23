@@ -20,7 +20,7 @@
     pointer-events: none;
   }
 
-  // Primary button - Main Join color #2A3647
+  // primary button - "add contatcs btn #2A3647
   &--primary {
     background-color: var(--bg-color-blue-darker);
     color: var(--bg-color-white);
@@ -37,50 +37,75 @@
     }
   }
 
-  // Secondary button - Outline style
-  &--secondary {
-    background-color: transparent;
-    color: var(--bg-color-blue-darker);
-    border: 2px solid var(--bg-color-blue-darker);
-  }
+  &--success {
+    background: #2a3647;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 8px;
+    font-size: var(--fs-button);
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: auto ;
 
-  // Ghost button - Minimal style
-  &--ghost {
-    background-color: transparent;
-    color: var(--bg-color-blue-darker);
+    .btn__icon {
+      width: auto;
+      height: auto;
+      margin-left: 6px;
+    }
 
     &:hover:not(:disabled) {
-      background-color: var(--bg-color-gray);
-      transform: translateY(-1px);
+      background: #007cee;
     }
   }
 
-  // Danger button
-  &--danger {
-    background-color: #dc3545;
-    color: var(--bg-color-white);
+  // Cancel button - Original close_overlay style from AddContact
+  &--cancel {
+    background-color: #ffffff;
+    border: 1px solid #2a3647;
+    color: #2a3647;
+    border-radius: 10px;
+    padding: 8px;
+    font-size: var(--fs-button);
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: auto;
+
+    .btn__icon {
+      width: auto;
+      height: auto;
+    }
 
     &:hover:not(:disabled) {
-      background-color: #c82333;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+      color: #007cee;
+      background-color: #ffffff;
+      border: 1px solid #007cee;
+      box-shadow: 1px 1px 1px 1px grey;
     }
   }
 
-  // Size variants
+  // Small button - Compact size for tight spaces
   &--small {
     padding: 0.5rem 1rem;
     font-size: var(--fs-small);
     min-height: 36px;
   }
 
+  // Large button - Prominent actions and CTAs
   &--large {
     padding: 1rem 2rem;
     font-size: var(--fs-button);
     min-height: 52px;
   }
 
-  // Full width
+  // Full width button - Spans entire container width
   &--full-width {
     width: 100%;
   }
@@ -92,7 +117,7 @@
     flex-shrink: 0;
   }
 
-  // Loading state
+  // Loading button - Shows spinner during async operations
   &--loading {
     position: relative;
     pointer-events: none;
@@ -113,6 +138,22 @@
       opacity: 0;
     }
   }
+
+  // Ghost button - Transparent background with subtle hover effects
+  &--ghost {
+    background-color: transparent;
+    color: var(--text-color-black);
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: var(--bg-color-gray);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
 @keyframes spin {
@@ -121,7 +162,7 @@
   }
 }
 
-// Special styles for contact actions
+// Edit button - Icon-only button for editing contact entries
 .btn--edit {
   background-color: transparent;
   color: var(--bg-color-blue-darker);
@@ -139,6 +180,7 @@
   }
 }
 
+// Delete button - Icon-only button for deleting contact entries
 .btn--delete {
   background-color: transparent;
   color: #dc3545;
@@ -156,7 +198,7 @@
   }
 }
 
-// Responsive adjustments
+// Responsive adjustments - Mobile-optimized button sizing
 @media (max-width: 768px) {
   .btn {
     padding: 0.875rem 1.25rem;

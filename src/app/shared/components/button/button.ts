@@ -7,7 +7,7 @@ import { Component, Input, Output, EventEmitter, computed } from '@angular/core'
   styleUrl: './button.scss'
 })
 export class Button {
-  @Input() variant: 'primary' | 'secondary' | 'ghost' | 'danger' | 'edit' | 'delete' = 'primary';
+  @Input() variant: 'primary' | 'secondary' | 'edit' | 'delete' | 'success' | 'cancel' | 'ghost' = 'primary';
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Input() icon?: string;
   @Input() iconAlt?: string;
@@ -17,6 +17,9 @@ export class Button {
   @Input() fullWidth = false;
 
   @Output() clickEvent = new EventEmitter<MouseEvent>();
+  @Output() doubleClick = new EventEmitter<MouseEvent>();
+  @Output() mouseEnter = new EventEmitter<MouseEvent>();
+  @Output() mouseLeave = new EventEmitter<MouseEvent>();
 
   // Angular 20 computed signal for dynamic classes
   protected buttonClasses = computed(() => {
@@ -35,16 +38,30 @@ export class Button {
       classes.push('btn--full-width');
     }
 
-    if (this.loading) {
-      classes.push('btn--loading');
-    }
-
     return classes.join(' ');
   });
 
   handleClick(event: MouseEvent): void {
     if (!this.disabled && !this.loading) {
       this.clickEvent.emit(event);
+    }
+  }
+
+  handleDoubleClick(event: MouseEvent): void {
+    if (!this.disabled && !this.loading) {
+      this.doubleClick.emit(event);
+    }
+  }
+
+  handleMouseEnter(event: MouseEvent): void {
+    if (!this.disabled) {
+      this.mouseEnter.emit(event);
+    }
+  }
+
+  handleMouseLeave(event: MouseEvent): void {
+    if (!this.disabled) {
+      this.mouseLeave.emit(event);
     }
   }
 }

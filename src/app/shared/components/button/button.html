@@ -2,7 +2,10 @@
   [class]="buttonClasses()"
   [disabled]="disabled || loading"
   [type]="type"
-  (click)="handleClick($event)">
+  (click)="handleClick($event)"
+  (dblclick)="handleDoubleClick($event)"
+  (mouseenter)="handleMouseEnter($event)"
+  (mouseleave)="handleMouseLeave($event)">
 
   @if (loading) {
     <div class="btn__loading-spinner"></div>

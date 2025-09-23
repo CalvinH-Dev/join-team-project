@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+
 @Component({
   selector: 'app-add-contact',
   imports: [FormsModule, RouterModule, CommonModule, ReactiveFormsModule],
@@ -40,6 +41,37 @@ export class AddContact {
     }
   }
 
+  onAddContact(): void {
+    console.log('Add contact clicked!');
+    // This can open the form or do other actions
+    this.openOverlay();
+  }
+
+  onEditContact(): void {
+    console.log('Edit contact clicked!');
+    // This can open edit mode or navigate to edit
+  }
+
+  onNameChange(value: string) {
+    this.contactForm.patchValue({ name: value });
+  }
+
+  onEmailChange(value: string) {
+    this.contactForm.patchValue({ email: value });
+  }
+
+  onPhoneChange(value: string) {
+    this.contactForm.patchValue({ phone: value });
+  }
+
+  onCreateContactClick() {
+    this.onSubmit();
+  }
+
+  onCancelClick() {
+    this.closeOverlay();
+  }
+
   closeOverlay() {
     this.isOverlayOpen = false;
   }
@@ -47,6 +79,5 @@ export class AddContact {
   openOverlay() {
     this.isOverlayOpen = true;
   }
-
 }
 

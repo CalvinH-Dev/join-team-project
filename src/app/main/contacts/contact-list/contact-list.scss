@@ -32,6 +32,12 @@ span {
 	flex-direction: column;
 	align-items: center;
 	padding-block: 3vh;
+	padding-bottom: 59px;
+
+	@include mixins.desktop {
+		padding-left: 1rem;
+		padding-bottom: revert;
+	}
 
 	// desktop Add new contact button styling
 	.desktop-add-button {

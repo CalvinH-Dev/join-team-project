@@ -11,6 +11,11 @@
 	box-sizing: border-box;
 }
 
+body {
+	height: 100dvh;
+	overflow-y: clip;
+}
+
 h1 {
 	font-family: Inter, sans-serif;
 	font-weight: var(--fw-bold);

@@ -1,10 +1,10 @@
 import { inject, Injectable, Injector, OnDestroy, runInInjectionContext } from "@angular/core";
 import { DocumentData } from "@angular/fire/compat/firestore";
 import {
+	addDoc,
 	collection,
 	collectionData,
 	doc,
-	addDoc,
 	Firestore,
 	onSnapshot,
 	QuerySnapshot,
@@ -69,7 +69,7 @@ export class ContactService implements OnDestroy {
 	private createLexObject(contactsArr: Contact[]) {
 		this.contactsObject = {};
 		contactsArr.forEach((obj) => {
-			const firstLetter: string = obj.name.trim().charAt(0);
+			const firstLetter: string = obj.name.trim().charAt(0).toUpperCase();
 
 			if (!firstLetter) return;
 
@@ -135,5 +135,12 @@ export class ContactService implements OnDestroy {
 		} catch {
 			throw new Error("Failed to delete contact");
 		}
+	}
+
+	generateInitials(name: string): string {
+		return name
+			.split(" ")
+			.map((n) => n.charAt(0).toUpperCase())
+			.join("");
 	}
 }

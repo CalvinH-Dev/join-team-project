@@ -15,22 +15,34 @@
 		</div>
 		<h2 class="contact-name">{{ contact.name }}</h2>
 
-		<!-- Contact Menu Button (Mobile Only) -->
-		<app-contact-menu [contactId]="contact.id" (editClicked)="onEditContact($event)"
-			(deleteClicked)="onDeleteContact($event)">
-		</app-contact-menu>
+			<!-- Contact Menu Button (Mobile Only) -->
+			<app-contact-menu
+				[contactId]="contact.id"
+				(editClicked)="onEditContact($event)"
+				(deleteClicked)="onDeleteContact($event)"
+			>
+			</app-contact-menu>
+		</div>
+		<div class="contact-details">
+			<h3>Contact Information</h3>
+			<p>
+				<strong>Email</strong><br />
+				<a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
+			</p>
+			<p>
+				<strong>Phone</strong><br />
+				{{ contact.telephone }}
+			</p>
+		</div>
 	</div>
 
-	<div class="contact-details">
-		<h3>Contact Information</h3>
-		<p>
-			<strong>Email</strong><br />
-			<a href="mailto:{{ contact.email }}">{{ contact.email }}</a>
-		</p>
-		<p>
-			<strong>Phone</strong><br />
-			{{ contact.telephone }}
-		</p>
-	</div>
-</div>
+	<!--Overlay edit -->
+	@if (isEditOverlayOpen()) {
+		<app-edit-contact
+			[contactId]="onEditContactId()"
+			(closed)="onCloseEditOverlay()"
+			(saved)="goBack()"
+		>
+		</app-edit-contact>
+	}
 }

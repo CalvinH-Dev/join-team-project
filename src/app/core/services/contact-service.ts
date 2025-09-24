@@ -4,6 +4,7 @@ import {
 	collection,
 	collectionData,
 	doc,
+	addDoc,
 	Firestore,
 	onSnapshot,
 	QuerySnapshot,
@@ -93,5 +94,30 @@ export class ContactService implements OnDestroy {
 	ngOnDestroy() {
 		this.unsubscribeContactForView?.();
 		this.unsubscribeContactsObject?.();
+	}
+
+	async addContact(contact: Contact): Promise<void> {
+		const contactsCol = collection(this.firestore, "contacts");
+
+		try {
+      await addDoc(contactsCol, {
+        name: contact.name,
+        email: contact.email,
+        telephone: contact.telephone,
+        initials: contact.initials,
+        color: contact.color,
+      });
+      console.log("Contact saved:", contact.name); //delete later
+    } catch (error) {
+      console.error("Save contact error:", error); //delete later
+      throw error;
+    }
+	}
+
+  generateInitials(name: string): string {
+		return name
+			.split(" ")
+			.map((n) => n.charAt(0).toUpperCase())
+			.join("");
 	}
 }

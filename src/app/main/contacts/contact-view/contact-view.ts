@@ -46,7 +46,15 @@ export class ContactView implements OnChanges {
 		// TODO: Implement delete functionality
 	}
 
+
   onCloseEditOverlay() {
     this.isEditOverlayOpen.set(false);
   }
+
+	getAvatarColor(contact: any): string {
+		if (contact?.color != null) {
+			return `var(--avatar-color-${contact.color})`;
+		}
+		return "var(--avatar-color-1)";
+	}
 }

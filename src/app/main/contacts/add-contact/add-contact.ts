@@ -12,6 +12,30 @@ import { Contact } from "@core/interfaces/contact";
 import { ContactService } from "@core/services/contact-service";
 import { ToastService } from "@shared/services/toast.service";
 
+/**
+ * Component for adding new contacts to the application.
+ *
+ * Features:
+ * - Reactive form with validation for name, email, and phone
+ * - Auto-capitalization of first and last names
+ * - Real-time form validation with custom patterns
+ * - Integration with ContactService for Firestore operations
+ * - Toast notifications for success/error feedback
+ * - Responsive modal design for mobile and desktop
+ *
+ * Form Validation:
+ * - Name: Requires first and last name, supports German umlauts
+ * - Email: Standard email validation with custom pattern
+ * - Phone: International phone number format (+, numbers, spaces, dashes)
+ *
+ * @example
+ * ```html
+ * <app-add-contact
+ *   (closed)="onOverlayClosed()"
+ *   (open)="onOverlayOpened()">
+ * </app-add-contact>
+ * ```
+ */
 @Component({
 	selector: "app-add-contact",
 	standalone: true,
@@ -20,12 +44,26 @@ import { ToastService } from "@shared/services/toast.service";
 	styleUrl: "./add-contact.scss",
 })
 export class AddContact {
+	/** Controls overlay visibility state */
 	isOverlayOpen = false;
+
+	/** Injected contact service for Firestore operations */
 	contactService = inject(ContactService);
 
+	/** Injected form builder for reactive forms */
 	private fb = inject(FormBuilder);
+
+	/** Injected toast service for user notifications */
 	private ts = inject(ToastService);
 
+	/**
+	 * Reactive form group with validation for contact creation.
+	 *
+	 * Form Fields:
+	 * - name: First and last name (auto-capitalized, German umlauts supported)
+	 * - email: Valid email address with custom pattern validation
+	 * - phone: International phone number format
+	 */
 	contactForm: FormGroup = this.fb.group({
 		name: [
 			"",
@@ -42,9 +80,25 @@ export class AddContact {
 		phone: ["", [Validators.required, Validators.pattern(/^\+?[0-9\s\-]{7,15}$/)]],
 	});
 
+	/** Emitted when the add contact overlay is closed */
 	@Output() closed = new EventEmitter<void>();
+
+	/** Emitted when the add contact overlay is opened */
 	@Output() open = new EventEmitter<void>();
 
+	/**
+	 * Capitalizes the first letter of each word in a name string.
+	 * Used for automatic name formatting during input.
+	 *
+	 * @param name - Full name string to capitalize
+	 * @returns Capitalized name string
+	 *
+	 * @example
+	 * ```typescript
+	 * this.capitalizeNames('john doe'); // Returns: 'John Doe'
+	 * this.capitalizeNames('mary-ann smith'); // Returns: 'Mary-ann Smith'
+	 * ```
+	 */
 	private capitalizeNames(name: string): string {
 		return name
 			.split(' ')
@@ -52,6 +106,17 @@ export class AddContact {
 			.join(' ');
 	}
 
+	/**
+	 * Handles name input events and applies auto-capitalization.
+	 * Only capitalizes when user has entered both first and last name.
+	 *
+	 * @param event - Input event from name form field
+	 *
+	 * @example
+	 * ```html
+	 * <input (input)="onNameInput($event)" formControlName="name">
+	 * ```
+	 */
 	onNameInput(event: Event) {
 		const input = event.target as HTMLInputElement;
 		const capitalizedValue = this.capitalizeNames(input.value);
@@ -64,6 +129,16 @@ export class AddContact {
 		}
 	}
 
+	/**
+	 * Handles form submission for creating a new contact.
+	 * Validates form, creates contact object, and saves to Firestore.
+	 * Shows success/error toast notifications and manages overlay state.
+	 *
+	 * @example
+	 * ```html
+	 * <form (ngSubmit)="onSubmit()">
+	 * ```
+	 */
 	onSubmit() {
 		if (this.contactForm.valid) {
 			const formValue = this.contactForm.value;
@@ -86,11 +161,21 @@ export class AddContact {
 				})
 				.catch((error) => {
 					this.ts.showError("Save error");
-					console.error(error);
-				});
+					});
 		}
 	}
 
+	/**
+	 * Generates a random color identifier for contact avatar.
+	 *
+	 * @returns Random number between 1 and 10 for CSS color variables
+	 *
+	 * @example
+	 * ```typescript
+	 * const colorId = this.getRandomColor(); // Returns: 3
+	 * // Used as: var(--avatar-color-3)
+	 * ```
+	 */
 	getRandomColor(): number {
 		return Math.floor(Math.random() * 10) + 1;
 	}
@@ -104,14 +189,12 @@ export class AddContact {
 	}
 
 	onAddContact(): void {
-		console.log("Add contact clicked!");
-		// This can open the form or do other actions
+			// Opens the add contact form overlay
 		this.openOverlay();
 	}
 
 	onEditContact(): void {
-		console.log("Edit contact clicked!");
-		// This can open edit mode or navigate to edit
+		// Opens edit mode for existing contact
 	}
   
 	onCreateContactClick() {

@@ -10,7 +10,7 @@ import {
 	QuerySnapshot,
 	deleteDoc,
 } from "@angular/fire/firestore";
-import { Contact } from "../interfaces/contact";
+import { Contact } from "@core/interfaces/contact";
 
 type ContactDictionary = Record<string, Contact[]>;
 

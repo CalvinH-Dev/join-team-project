@@ -5,8 +5,8 @@ import { Button } from "@shared/components/button/button";
 import { ContactMenu } from "@shared/components/contact-menu/contact-menu";
 import { ToastService } from "@shared/services/toast.service";
 import { ToastAction } from "@shared/components/toast/toast";
-import { ContactService } from "app/core/services/contact-service";
-import { EditContact } from "../edit-contact/edit-contact";
+import { ContactService } from "@core/services/contact-service";
+import { EditContact } from "@main/contacts/edit-contact/edit-contact";
 
 @Component({
 	imports: [Button, ContactMenu, EditContact],

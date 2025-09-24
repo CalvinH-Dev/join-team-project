@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import { Contact } from "app/core/interfaces/contact";
+import { Contact } from "@core/interfaces/contact";
 
 @Component({
 	selector: "app-header",

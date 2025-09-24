@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output, OnInit, inject } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { doc, Firestore, updateDoc, addDoc, collection, getDoc } from "@angular/fire/firestore";
-import { Contact } from "app/core/interfaces/contact";
+import { Contact } from "@core/interfaces/contact";
 import { ToastService } from "@shared/services/toast.service";
 
 @Component({

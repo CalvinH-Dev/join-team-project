@@ -8,7 +8,7 @@ import {
 	computed,
 	signal,
 } from "@angular/core";
-import { Button } from "../button/button";
+import { Button } from "@shared/components/button/button";
 
 export interface ToastAction {
 	label: string;

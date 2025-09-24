@@ -8,8 +8,8 @@ import {
 	Validators,
 } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import { Contact } from "app/core/interfaces/contact";
-import { ContactService } from "app/core/services/contact-service";
+import { Contact } from "@core/interfaces/contact";
+import { ContactService } from "@core/services/contact-service";
 import { ToastService } from "@shared/services/toast.service";
 
 @Component({

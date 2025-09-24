@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, signal, HostListener, ElementRef, inject } from '@angular/core';
-import { Button } from '../button/button';
+import { Button } from '@shared/components/button/button';
 
 @Component({
   selector: 'app-contact-menu',

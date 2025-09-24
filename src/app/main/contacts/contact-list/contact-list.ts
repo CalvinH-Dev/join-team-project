@@ -2,7 +2,7 @@ import { KeyValuePipe } from "@angular/common";
 import { Component, EventEmitter, inject, Output, output } from "@angular/core";
 import { Router } from "@angular/router";
 import { Button } from "@shared/components/button/button";
-import { ContactService } from "app/core/services/contact-service";
+import { ContactService } from "@core/services/contact-service";
 
 @Component({
 	selector: "app-contact-list",

@@ -77,6 +77,8 @@ export class EditContact implements OnInit {
 
   /** Flag indicating whether component is in edit mode (true) or create mode (false) */
   isEdit = false;
+  contactService = inject(ContactService);
+  contact!: Contact;
 
   /**
    * Initializes the component with a reactive form containing validation rules.
@@ -141,10 +143,12 @@ export class EditContact implements OnInit {
 
     if (snapshot.exists()) {
       const data = snapshot.data() as Contact;
+      this.contact = data;
       this.contactForm.patchValue({
         name: data.name,
         email: data.email,
         phone: data.telephone,
+
       });
     } else {
       this.closeOverlay();
@@ -189,17 +193,6 @@ export class EditContact implements OnInit {
           email: values.email,
           telephone: values.phone,
           initials: initials,
-        });
-        this.saved.emit();
-      } else {
-        // Neuer Kontakt erstellen
-        const colRef = collection(this.firestore, "contacts");
-        await addDoc(colRef, {
-          name: values.name,
-          email: values.email,
-          telephone: values.phone,
-          initials: initials,
-          color: this.getRandomColor(),
         });
         this.saved.emit();
       }
@@ -264,22 +257,5 @@ export class EditContact implements OnInit {
   private getInitials(name: string): string {
     const parts = name.trim().split(" ");
     return parts.map(p => p[0].toUpperCase()).join("").substring(0, 2);
-  }
-
-  /**
-   * Generates a random color from a predefined palette for contact avatars.
-   * Used when creating new contacts to assign a background color.
-   *
-   * @returns Random color hex string from predefined palette
-   *
-   * @example
-   * ```typescript
-   * const color = this.getRandomColor(); // Returns: '#FF5733' (example)
-   * // Used for contact avatar background color
-   * ```
-   */
-  private getRandomColor(): string {
-    const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A8", "#FFC300"];
-    return colors[Math.floor(Math.random() * colors.length)];
   }
 }

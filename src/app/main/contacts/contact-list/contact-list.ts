@@ -1,5 +1,5 @@
 import { KeyValuePipe } from "@angular/common";
-import { Component, EventEmitter, inject, Output, output } from "@angular/core";
+import { Component, EventEmitter, inject, input, Output, output } from "@angular/core";
 import { Router } from "@angular/router";
 import { Button } from "@shared/components/button/button";
 import { ContactService } from "@core/services/contact-service";
@@ -43,6 +43,7 @@ export class ContactList {
 
 	/** Injected router for contact navigation */
 	router = inject(Router);
+	activeId = input<string>();
 
 	/** Emitted when the add contact button is clicked */
 	@Output() addContactClicked = new EventEmitter<void>();

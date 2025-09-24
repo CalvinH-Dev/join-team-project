@@ -1,7 +1,9 @@
 @use "../../../../styles/mixins";
 
 .enter-animation {
-	animation: slide-fade 1s;
+	@include mixins.desktop {
+		animation: slide-fade 1s;
+	}
 }
 
 @keyframes slide-fade {

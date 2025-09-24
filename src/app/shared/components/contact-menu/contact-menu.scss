@@ -1,11 +1,11 @@
 .contact-menu-dropdown {
   position: fixed;
   bottom: 80px; // Above the menu button
-  right: 20px;
+  right: 8px;
   background-color: var(--bg-color-white);
   border: 1px solid var(--bg-color-gray-darker);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px 12px 0 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
   padding: 8px;
   z-index: 1000;
   min-width: 120px;
@@ -47,6 +47,7 @@
       width: 16px;
       height: 16px;
       margin-right: 8px;
+      order: -1;
     }
   }
 

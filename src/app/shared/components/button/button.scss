@@ -187,44 +187,9 @@
 			transform: translateY(-1px);
 		}
 
-		// Loading button - Shows spinner during async operations
-		&--loading {
-			position: relative;
-			pointer-events: none;
-
-			&::after {
-				content: "";
-				position: absolute;
-				width: 1rem;
-				height: 1rem;
-				border: 2px solid transparent;
-				border-top: 2px solid currentColor;
-				border-radius: 50%;
-				animation: spin 1s linear infinite;
-			}
-
-			.btn__icon,
-			.btn__text {
-				opacity: 0;
-			}
+		&:active {
+			transform: translateY(0);
 		}
-
-		// Ghost button - Transparent background with subtle hover effects
-		&--ghost {
-			background-color: transparent;
-			color: var(--text-color-black);
-			border: none;
-
-			&:hover:not(:disabled) {
-				background-color: var(--bg-color-gray);
-				transform: translateY(-1px);
-			}
-
-			&:active {
-				transform: translateY(0);
-			}
-		}
-
 	}
 
 	@keyframes spin {
@@ -234,38 +199,74 @@
 	}
 
 	// Edit button - Icon-only button for editing contact entries
-	.btn--edit {
+	&--edit {
 		background-color: transparent;
 		color: var(--bg-color-blue-darker);
 		padding: 0.5rem;
 		border-radius: 0.5rem;
 		min-height: auto;
 
-		&:hover {
-			background-color: var(--bg-color-gray);
+		&:hover:not(:disabled) {
+			background-color: transparent;
+			color: #29ABE2;
+
+			.btn__icon {
+				filter: brightness(0) saturate(100%) invert(53%) sepia(94%) saturate(1158%) hue-rotate(174deg) brightness(101%) contrast(101%);
+			}
+		}
+
+		// Disable hover effects on touch devices
+		@media (hover: none) {
+			&:hover:not(:disabled) {
+				background-color: transparent;
+				color: var(--bg-color-blue-darker);
+
+				.btn__icon {
+					filter: none;
+				}
+			}
 		}
 
 		.btn__icon {
 			width: 1rem;
 			height: 1rem;
+			transition: filter 0.2s ease;
 		}
 	}
 
 	// Delete button - Icon-only button for deleting contact entries
-	.btn--delete {
+	&--delete {
 		background-color: transparent;
-		color: #dc3545;
+		color: var(--bg-color-blue-darker);
 		padding: 0.5rem;
 		border-radius: 0.5rem;
 		min-height: auto;
 
-		&:hover {
-			background-color: rgba(220, 53, 69, 0.1);
+		&:hover:not(:disabled) {
+			background-color: transparent;
+			color: #29ABE2;
+
+			.btn__icon {
+				filter: brightness(0) saturate(100%) invert(53%) sepia(94%) saturate(1158%) hue-rotate(174deg) brightness(101%) contrast(101%);
+			}
+		}
+
+		// Disable hover effects on touch devices
+		@media (hover: none) {
+			&:hover:not(:disabled) {
+				background-color: transparent;
+				color: var(--bg-color-blue-darker);
+
+				.btn__icon {
+					filter: none;
+				}
+			}
 		}
 
 		.btn__icon {
 			width: 1rem;
 			height: 1rem;
+			transition: filter 0.2s ease;
 		}
 	}
 

@@ -43,10 +43,18 @@
           </span>
         </div>
 
-        <button type="submit" [disabled]="contactForm.invalid">
-          {{ isEdit ? 'Save changes' : 'Create contact' }}
-          <img src="./images/assets/check.svg" alt="check" />
-        </button>
+        <div class="buttons">
+          @if (isEdit) {
+            <button class="cancel" type="button" (click)="deleteContact()">
+              Delete
+            </button>
+          }
+
+          <button type="submit" [disabled]="contactForm.invalid">
+            {{ isEdit ? 'Save' : 'Create contact' }}
+            <img src="./images/assets/check.svg" alt="check" />
+          </button>
+        </div>
       </form>
     </div>
   </div>
@@ -99,14 +107,13 @@
         </div>
 
         <div class="buttons">
-          <button class="cancel" type="button" (click)="closeOverlay()">
-            {{ isEdit ? 'Cancel' : 'Delete' }}
-            <img [src]="isEdit ? './images/assets/close_cross.svg' : './images/assets/delete_icon.svg'" alt="x" />
+          <button type="submit" [disabled]="contactForm.invalid">
+            {{ isEdit ? 'Save' : 'Create contact' }}
+            <img src="./images/assets/check.svg" alt="check" />
           </button>
 
-          <button type="submit" [disabled]="contactForm.invalid">
-            {{ isEdit ? 'Save changes' : 'Create contact' }}
-            <img src="./images/assets/check.svg" alt="check" />
+          <button class="cancel" type="button" (click)="isEdit ? deleteContact() : closeOverlay()">
+            {{ isEdit ? 'Delete' : 'Cancel' }}
           </button>
         </div>
       </form>

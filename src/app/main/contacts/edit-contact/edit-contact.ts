@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { doc, Firestore, updateDoc, addDoc, collection, getDoc } from "@angular/fire/firestore";
 import { Contact } from "@core/interfaces/contact";
 import { ToastService } from "@shared/services/toast.service";
+import { ContactService } from "@core/services/contact-service";
 
 /**
  * Component for editing existing contacts or creating new ones.
@@ -67,6 +68,9 @@ export class EditContact implements OnInit {
 
   /** Injected toast service for user notifications */
   private toastService = inject(ToastService);
+
+  /** Injected contact service for contact operations */
+  private contactService = inject(ContactService);
 
   /** Reactive form group with validation for contact editing/creation */
   contactForm: FormGroup;
@@ -203,6 +207,31 @@ export class EditContact implements OnInit {
       this.closeOverlay();
     } catch (err) {
       this.toastService.showError("Failed to save contact. Please try again.");
+    }
+  }
+
+  /**
+   * Deletes the current contact from Firestore.
+   * Only available when editing an existing contact (contactId must exist).
+   * Shows success/error toast and closes overlay on completion.
+   *
+   * @example
+   * ```typescript
+   * this.deleteContact(); // Deletes contact and closes overlay
+   * ```
+   */
+  async deleteContact() {
+    if (!this.contactId) {
+      this.toastService.showError("Cannot delete contact: No contact ID provided");
+      return;
+    }
+
+    try {
+      await this.contactService.deleteContact(this.contactId);
+      this.toastService.showSuccess("Contact deleted successfully");
+      this.closeOverlay();
+    } catch (error) {
+      this.toastService.showError("Failed to delete contact. Please try again.");
     }
   }
 

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx firebase deploy:*)",
+      "Bash(npm install:*)",
+      "Bash(firebase login:*)",
+      "Bash(ng serve)",
+      "Bash(ng serve:*)",
+      "Bash(npm run lint)",
+      "Bash(ng build:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

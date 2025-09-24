@@ -34,8 +34,17 @@ export class ContactView implements OnChanges {
 		// TODO: Implement edit functionality
 	}
 
-	onDeleteContact(contactId: string): void {
-		console.log("Delete contact:", contactId);
-		// TODO: Implement delete functionality
+	async onDeleteContact(contactId: string) {
+		if (!contactId) return;
+
+		const confirmed = confirm("Are you sure you want to delete this contact?");
+		if (!confirmed) return;
+
+		try {
+			await this.contactService.deleteContact(contactId);
+			this.goBack();
+		} catch {
+			alert("Failed to delete contact. Please try again.");
+		}
 	}
 }

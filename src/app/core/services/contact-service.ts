@@ -8,6 +8,7 @@ import {
 	Firestore,
 	onSnapshot,
 	QuerySnapshot,
+	deleteDoc,
 } from "@angular/fire/firestore";
 import { Contact } from "../interfaces/contact";
 
@@ -123,5 +124,16 @@ export class ContactService implements OnDestroy {
 		const fallbackIndex = (safeId.charCodeAt(0) % 10) + 1;
 
 		return `var(--avatar-color-${fallbackIndex})`;
+	}
+
+	async deleteContact(contactId: string) {
+		if (!contactId) return;
+
+		const contactDoc = doc(this.firestore, "contacts", contactId);
+		try {
+			await deleteDoc(contactDoc);
+		} catch {
+			throw new Error("Failed to delete contact");
+		}
 	}
 }

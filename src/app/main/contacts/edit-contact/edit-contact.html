@@ -12,9 +12,14 @@
 		</div>
 
 		<div class="middle">
-			<div class="initials" [style.background-color]="contactService.getAvatarColor(contact)">
-				{{ contact.initials }}
-			</div>
+			@if (contact) {
+				<div
+					class="initials"
+					[style.background-color]="contact && contactService.getAvatarColor(contact)"
+				>
+					{{ contact.initials }}
+				</div>
+			}
 		</div>
 
 		<div class="down">
@@ -77,16 +82,15 @@
 		</div>
 
 		<div class="middle_desktop">
-      @if (contact) {
-			<div
-      class="initials"
-      [style.background-color]="contact && contactService.getAvatarColor(contact)"
-      >
-				{{ contact.initials }}
-			</div>
-    }
+			@if (contact) {
+				<div
+					class="initials"
+					[style.background-color]="contact && contactService.getAvatarColor(contact)"
+				>
+					{{ contact.initials }}
+				</div>
+			}
 		</div>
-
 
 		<div class="right_desktop">
 			<div class="close_desktop" (click)="closeOverlay()">

@@ -14,6 +14,13 @@ import { ToastService } from "./shared/services/toast.service";
 export class App {
 	protected readonly title = signal("join");
 	protected toastService = inject(ToastService);
-  
+
 	protected currentToast = this.toastService.toast;
+
+	protected handleToastAction(): void {
+		const toast = this.currentToast();
+		if (toast?.action) {
+			toast.action.handler();
+		}
+	}
 }

@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { ToastAction } from '@shared/components/toast/toast';
 
 export interface ToastConfig {
   type: 'success' | 'error' | 'warning' | 'info';
@@ -6,6 +7,8 @@ export interface ToastConfig {
   message: string;
   duration?: number;
   icon?: string;
+  persistent?: boolean;
+  action?: ToastAction;
 }
 
 @Injectable({
@@ -47,6 +50,17 @@ export class ToastService {
       message,
       title,
       duration: 4000
+    });
+  }
+
+  // Show a warning toast with action button
+  showWarningWithAction(message: string, action: ToastAction, title?: string): void {
+    this.show({
+      type: 'warning',
+      message,
+      title,
+      action,
+      duration: 5000
     });
   }
 

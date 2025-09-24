@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output, OnInit, inject } from "@angular
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { doc, Firestore, updateDoc, addDoc, collection, getDoc } from "@angular/fire/firestore";
 import { Contact } from "app/core/interfaces/contact";
+import { ToastService } from "@shared/services/toast.service";
 
 @Component({
   selector: "app-edit-contact",
@@ -14,9 +15,11 @@ import { Contact } from "app/core/interfaces/contact";
 export class EditContact implements OnInit {
   @Input() contactId: string | null = null;
   @Output() closed = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<void>();
 
   private firestore = inject(Firestore);
   private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
 
   contactForm: FormGroup;
   isEdit = false;
@@ -82,6 +85,7 @@ export class EditContact implements OnInit {
           initials: initials,
         });
         console.log("Kontakt aktualisiert:", values);
+        this.saved.emit();
       } else {
         // Neuer Kontakt erstellen
         const colRef = collection(this.firestore, "contacts");
@@ -93,11 +97,13 @@ export class EditContact implements OnInit {
           color: this.getRandomColor(),
         });
         console.log("Neuer Kontakt erstellt:", values);
+        this.saved.emit();
       }
 
       this.closeOverlay();
     } catch (err) {
       console.error("Fehler beim Speichern des Kontakts:", err);
+      this.toastService.showError("Failed to save contact. Please try again.");
     }
   }
 

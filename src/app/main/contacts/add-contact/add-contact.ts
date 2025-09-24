@@ -24,7 +24,7 @@ export class AddContact {
 	contactService = inject(ContactService);
 
 	private fb = inject(FormBuilder);
-  private ts = inject(ToastService);
+	private ts = inject(ToastService);
 
 	contactForm: FormGroup = this.fb.group({
 		name: [
@@ -60,7 +60,7 @@ export class AddContact {
 			this.contactService
 				.addContact(newContact)
 				.then(() => {
-          this.ts.showSuccess("Contact added");
+					this.ts.showSuccess("Contact successfully created");
 					this.contactForm.reset();
 					this.closeOverlay();
 				})
@@ -93,19 +93,7 @@ export class AddContact {
 		console.log("Edit contact clicked!");
 		// This can open edit mode or navigate to edit
 	}
-
-	onNameChange(value: string) {
-		this.contactForm.patchValue({ name: value });
-	}
-
-	onEmailChange(value: string) {
-		this.contactForm.patchValue({ email: value });
-	}
-
-	onPhoneChange(value: string) {
-		this.contactForm.patchValue({ phone: value });
-	}
-
+  
 	onCreateContactClick() {
 		this.onSubmit();
 	}

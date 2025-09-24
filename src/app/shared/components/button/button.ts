@@ -15,8 +15,7 @@ export class Button {
 		| "delete"
 		| "success"
 		| "cancel"
-		| "ghost"
-		| "contact-menu" = "primary";
+		| "ghost" = "primary";
 	@Input() size: "small" | "medium" | "large" = "medium";
 	@Input() icon?: string;
 	@Input() iconAlt?: string;

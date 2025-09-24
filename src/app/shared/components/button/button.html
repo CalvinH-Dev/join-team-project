@@ -10,12 +10,12 @@
 	@if (loading) {
 		<div class="btn__loading-spinner"></div>
 	} @else {
+		<span class="btn__text" [class.sr-only]="loading">
+			<ng-content></ng-content>
+		</span>
+
 		@if (icon) {
 			<img class="btn__icon" [src]="icon" [alt]="iconAlt || 'Icon'" />
 		}
 	}
-
-	<span class="btn__text" [class.sr-only]="loading">
-		<ng-content></ng-content>
-	</span>
 </button>

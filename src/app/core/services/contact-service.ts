@@ -87,7 +87,7 @@ export class ContactService implements OnDestroy {
 			email: data["email"] || "",
 			telephone: data["telephone"] || "",
 			initials: data["initials"] || "",
-			color: data["color"] || 1,
+			color: data["color"],
 		};
 	}
 
@@ -100,18 +100,28 @@ export class ContactService implements OnDestroy {
 		const contactsCol = collection(this.firestore, "contacts");
 
 		try {
-      await addDoc(contactsCol, {
-        name: contact.name,
-        email: contact.email,
-        telephone: contact.telephone,
-        initials: contact.initials,
-        color: contact.color,
-      });
-      console.log("Contact saved:", contact.name); //delete later
-    } catch (error) {
-      console.error("Save contact error:", error); //delete later
-      throw error;
-    }
+			await addDoc(contactsCol, {
+				name: contact.name,
+				email: contact.email,
+				telephone: contact.telephone,
+				initials: contact.initials,
+				color: contact.color,
+			});
+			console.log("Contact saved:", contact.name); //delete later
+		} catch (error) {
+			console.error("Save contact error:", error); //delete later
+			throw error;
+		}
 	}
 
+	getAvatarColor(contact: Contact): string {
+		if (contact.color) {
+			return `var(--avatar-color-${contact.color})`;
+		}
+
+		const safeId = contact.id || contact.initials || "X";
+		const fallbackIndex = (safeId.charCodeAt(0) % 10) + 1;
+
+		return `var(--avatar-color-${fallbackIndex})`;
+	}
 }

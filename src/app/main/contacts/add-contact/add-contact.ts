@@ -29,7 +29,7 @@ export class AddContact {
 	contactForm: FormGroup = this.fb.group({
 		name: [
 			"",
-			[Validators.required, Validators.pattern(/^[A-ZÄÖÜ][a-zäöüß]+ [A-ZÄÖÜ][a-zäöüß]+$/)],
+			[Validators.required, Validators.pattern(/^[a-zA-ZäöüÄÖÜß]+ [a-zA-ZäöüÄÖÜß]+$/)],
 		],
 		email: [
 			"",
@@ -45,15 +45,35 @@ export class AddContact {
 	@Output() closed = new EventEmitter<void>();
 	@Output() open = new EventEmitter<void>();
 
+	private capitalizeNames(name: string): string {
+		return name
+			.split(' ')
+			.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+			.join(' ');
+	}
+
+	onNameInput(event: Event) {
+		const input = event.target as HTMLInputElement;
+		const capitalizedValue = this.capitalizeNames(input.value);
+
+		// Nur aktualisieren wenn es mindestens 2 Wörter mit Leerzeichen gibt
+		if (input.value.includes(' ') && input.value.split(' ').length >= 2) {
+			this.contactForm.patchValue({
+				name: capitalizedValue
+			});
+		}
+	}
+
 	onSubmit() {
 		if (this.contactForm.valid) {
 			const formValue = this.contactForm.value;
+			const capitalizedName = this.capitalizeNames(formValue.name);
 
 			const newContact: Contact = {
-				name: formValue.name,
+				name: capitalizedName,
 				email: formValue.email,
 				telephone: formValue.phone,
-				initials: this.contactService.generateInitials(formValue.name),
+				initials: this.contactService.generateInitials(capitalizedName),
 				color: this.getRandomColor(),
 			};
 

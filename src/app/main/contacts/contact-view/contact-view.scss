@@ -97,6 +97,10 @@
 	align-items: center;
 	gap: 1rem;
 	margin-bottom: 1.5rem;
+
+	@include mixins.desktop {
+		gap: 3rem;
+	}
 }
 
 .title-underline {

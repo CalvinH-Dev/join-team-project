@@ -36,4 +36,14 @@
 			</p>
 		</div>
 	</div>
+
+	<!--Overlay edit -->
+	@if (isEditOverlayOpen()) {
+		<app-edit-contact
+			[contactId]="onEditContactId()"
+			(closed)="onCloseEditOverlay()"
+			(saved)="goBack()"
+		>
+		</app-edit-contact>
+	}
 }

@@ -33,9 +33,9 @@ span {
 	align-items: center;
 	padding-block: 3vh;
 	padding-bottom: 59px;
+	padding-left: 1rem;
 
 	@include mixins.desktop {
-		padding-left: 1rem;
 		padding-bottom: revert;
 	}
 

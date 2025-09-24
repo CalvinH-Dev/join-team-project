@@ -77,10 +77,16 @@
 		</div>
 
 		<div class="middle_desktop">
-			<div class="initials" [style.background-color]="contactService.getAvatarColor(contact)">
+      @if (contact) {
+			<div
+      class="initials"
+      [style.background-color]="contact && contactService.getAvatarColor(contact)"
+      >
 				{{ contact.initials }}
 			</div>
+    }
 		</div>
+
 
 		<div class="right_desktop">
 			<div class="close_desktop" (click)="closeOverlay()">

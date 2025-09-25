@@ -49,6 +49,9 @@ export class ContactService implements OnDestroy {
 	/** Dictionary of contacts organized alphabetically by first letter of name */
 	contactsObject: ContactDictionary = {};
 
+	/** Pre-computed array of letter-contacts pairs for template iteration */
+	contactsArray: Array<{letter: string, contacts: Contact[]}> = [];
+
 	/** Cleanup function for contacts collection subscription */
 	unsubscribeContactsObject: (() => void) | null = null;
 
@@ -132,6 +135,14 @@ export class ContactService implements OnDestroy {
 
 			this.contactsObject[firstLetter].push(obj);
 		});
+
+		// Update pre-computed array for template iteration
+		this.contactsArray = Object.keys(this.contactsObject)
+			.sort()
+			.map(letter => ({
+				letter,
+				contacts: this.contactsObject[letter]
+			}));
 	}
 
 	private buildDocument(id: string, data: DocumentData): Contact {

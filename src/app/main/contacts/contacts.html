@@ -1,10 +1,13 @@
 <section>
 	<app-contact-list
-		[class.mobile-d-none]="!showList"
 		(addContactClicked)="onAddContactClicked()"
-		[activeId]="id"
+		(contactSelected)="onContactSelected($event)"
+		[activeId]="activeContactId"
 	/>
-	<app-contact-view [id]="id" [class.mobile-d-none]="showList" />
+	<app-contact-view
+		[id]="activeContactId || ''"
+		(showContactList)="showContactList()"
+	/>
 	@if (isAddContactOpen) {
 		<div class="overlay-wrapper">
 			<div class="overlay-backdrop"></div>

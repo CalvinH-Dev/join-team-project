@@ -18,6 +18,35 @@ section {
 	}
 }
 
+// Mobile Navigation States - default is mobile-first
+:host {
+	&.display-contact-list {
+		app-contact-list {
+			display: block;
+		}
+		app-contact-view {
+			display: none;
+		}
+	}
+
+	&.display-single-contact {
+		app-contact-list {
+			display: none;
+		}
+		app-contact-view {
+			display: block;
+		}
+	}
+
+	@include mixins.desktop {
+		// Desktop shows both components always
+		app-contact-list,
+		app-contact-view {
+			display: block !important;
+		}
+	}
+}
+
 .overlay-wrapper {
 	position: fixed;
 	inset: 0;

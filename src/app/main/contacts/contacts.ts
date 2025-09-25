@@ -1,6 +1,5 @@
-import { CommonModule, ViewportScroller } from "@angular/common";
-import { Component, inject } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { Component, HostBinding } from "@angular/core";
 import { AddContact } from "./add-contact/add-contact";
 import { ContactList } from "./contact-list/contact-list";
 import { ContactView } from "./contact-view/contact-view";
@@ -12,13 +11,16 @@ import { ContactView } from "./contact-view/contact-view";
 	styleUrl: "./contacts.scss",
 })
 export class Contacts {
-	vps = inject(ViewportScroller);
-	route = inject(ActivatedRoute);
-	router = inject(Router);
-	id = this.route.snapshot.paramMap.get("id") || "";
-	showList = true;
-
+	// Component-State Navigation (like working project)
+	activeContactId: string | undefined = undefined;
 	isAddContactOpen = false;
+
+	// HostBinding for CSS classes (no dynamic class bindings)
+	@HostBinding('class.display-contact-list')
+	displayContactList = true;
+
+	@HostBinding('class.display-single-contact')
+	displaySingleContact = false;
 
 	onAddContactClicked() {
 		this.isAddContactOpen = true;
@@ -30,19 +32,28 @@ export class Contacts {
 
 	onContactCreated(id: string) {
 		if (!id) return;
-		this.router.navigate(["/contacts", id]);
-		this.vps.scrollToAnchor(id, { behavior: "smooth" });
+		// Component-State Navigation instead of Router
+		this.activeContactId = id;
+		this.showSingleContact();
 	}
 
-	constructor() {
-		this.route.params.subscribe((params) => {
-			if (!params["id"]) {
-				this.showList = true;
-			} else {
-				this.showList = false;
-			}
+	// Event-based navigation methods
+	onContactSelected(contactId: string | undefined) {
+		this.activeContactId = contactId;
+		if (contactId) {
+			this.showSingleContact();
+		} else {
+			this.showContactList();
+		}
+	}
 
-			this.id = params["id"];
-		});
+	showContactList() {
+		this.displayContactList = true;
+		this.displaySingleContact = false;
+	}
+
+	showSingleContact() {
+		this.displayContactList = false;
+		this.displaySingleContact = true;
 	}
 }

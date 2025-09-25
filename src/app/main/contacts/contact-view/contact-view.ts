@@ -1,6 +1,5 @@
-import { Component, inject, input, OnChanges, signal } from "@angular/core";
+import { Component, EventEmitter, inject, input, OnChanges, Output, signal } from "@angular/core";
 import { Firestore } from "@angular/fire/firestore";
-import { ActivatedRoute, Router } from "@angular/router";
 import { ContactService } from "@core/services/contact-service";
 import { EditContact } from "@main/contacts/edit-contact/edit-contact";
 import { Button } from "@shared/components/button/button";
@@ -52,11 +51,8 @@ export class ContactView implements OnChanges {
 	/** Injected contact service for contact management operations */
 	contactService = inject(ContactService);
 
-	/** Injected activated route for accessing route parameters */
-	route = inject(ActivatedRoute);
-
-	/** Injected router for navigation operations */
-	router = inject(Router);
+	/** Output event emitted when user wants to return to contact list */
+	@Output() showContactList = new EventEmitter<void>();
 
 	/** Injected toast service for user notifications */
 	toastService = inject(ToastService);
@@ -95,16 +91,16 @@ export class ContactView implements OnChanges {
 	}
 
 	/**
-	 * Navigates back to the contacts list page.
+	 * Emits event to show the contacts list page.
 	 * Used by the back button in the contact view header.
 	 *
 	 * @example
 	 * ```typescript
-	 * this.goBack(); // Navigates to /contacts route
+	 * this.goBack(); // Emits showContactList event
 	 * ```
 	 */
 	goBack() {
-		this.router.navigate(["/contacts"]);
+		this.showContactList.emit();
 	}
 
 	/**
@@ -223,7 +219,7 @@ export class ContactView implements OnChanges {
 			await this.contactService.deleteContact(contactId);
 			this.toastService.showSuccess("Contact deleted successfully");
 			this.resetDeleteConfirmation();
-			this.goBack();
+			this.showContactList.emit();
 		} catch {
 			this.toastService.showError("Failed to delete contact. Please try again.");
 			this.resetDeleteConfirmation();

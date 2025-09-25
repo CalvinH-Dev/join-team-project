@@ -10,6 +10,5 @@ export const routes: Routes = [
 	{ path: "add-task", component: AddTask },
 	{ path: "board", component: Board },
 	{ path: "contacts", component: Contacts },
-	{ path: "contacts/:id", component: Contacts },
 	{ path: "**", redirectTo: "summary" },
 ];

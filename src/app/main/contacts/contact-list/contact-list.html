@@ -20,15 +20,13 @@
 	</app-button>
 
 	<div class="all-contacts">
-		@for (item of contactService.contactsObject | keyvalue; track $index) {
-			@let letter = item.key;
-			@let contactsForLetter = item.value;
+		@for (letterGroup of contactService.contactsArray; track letterGroup.letter) {
 			<div class="letter-container">
 				<div class="letter-padding">
-					<span class="letter-headline">{{ letter }}</span>
+					<span class="letter-headline">{{ letterGroup.letter }}</span>
 				</div>
 				<div class="letter-contacts">
-					@for (contact of contactsForLetter; track contact.id) {
+					@for (contact of letterGroup.contacts; track contact.id) {
 						<div
 							class="contact"
 							[id]="contact.id"

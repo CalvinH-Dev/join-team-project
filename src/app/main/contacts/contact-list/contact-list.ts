@@ -1,6 +1,4 @@
-import { KeyValuePipe } from "@angular/common";
 import { Component, EventEmitter, inject, input, Output, output } from "@angular/core";
-import { Router } from "@angular/router";
 import { ContactService } from "@core/services/contact-service";
 import { Button } from "@shared/components/button/button";
 
@@ -33,7 +31,7 @@ import { Button } from "@shared/components/button/button";
  */
 @Component({
 	selector: "app-contact-list",
-	imports: [KeyValuePipe, Button],
+	imports: [Button],
 	templateUrl: "./contact-list.html",
 	styleUrl: "./contact-list.scss",
 })
@@ -41,8 +39,6 @@ export class ContactList {
 	/** Injected contact service for accessing organized contact data */
 	contactService = inject(ContactService);
 
-	/** Injected router for contact navigation */
-	router = inject(Router);
 	activeId = input<string>();
 
 	/** Emitted when the add contact button is clicked */
@@ -79,6 +75,7 @@ export class ContactList {
 	 */
 	onContactSelect(id: string | undefined) {
 		if (!id) return;
-		this.router.navigate(["/contacts", id]);
+		// Event-based navigation instead of Router
+		this.contactSelected.emit(id);
 	}
 }

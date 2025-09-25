@@ -1,4 +1,4 @@
-import { CommonModule, ViewportScroller } from "@angular/common";
+import { CommonModule, Location, ViewportScroller } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AddContact } from "./add-contact/add-contact";
@@ -17,6 +17,7 @@ export class Contacts {
 	router = inject(Router);
 	id = this.route.snapshot.paramMap.get("id") || "";
 	showList = true;
+	private location = inject(Location);
 
 	isAddContactOpen = false;
 
@@ -30,19 +31,19 @@ export class Contacts {
 
 	onContactCreated(id: string) {
 		if (!id) return;
-		this.router.navigate(["/contacts", id]);
+		this.location.replaceState("/contacts", `id=${id}`);
 		this.vps.scrollToAnchor(id, { behavior: "smooth" });
 	}
 
 	constructor() {
-		this.route.params.subscribe((params) => {
-			if (!params["id"]) {
-				this.showList = true;
-			} else {
-				this.showList = false;
-			}
+		this.location.onUrlChange((url) => {
+			this.id = url.split("?")[1]?.split("id=")[1];
 
-			this.id = params["id"];
+			if (this.id) {
+				this.showList = false;
+			} else {
+				this.showList = true;
+			}
 		});
 	}
 }

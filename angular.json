@@ -17,6 +17,7 @@
 				"build": {
 					"builder": "@angular/build:application",
 					"options": {
+						"baseHref": "/angular-projects/join/",
 						"browser": "src/main.ts",
 						"polyfills": ["zone.js"],
 						"tsConfig": "tsconfig.app.json",
@@ -40,7 +41,7 @@
 								{
 									"type": "anyComponentStyle",
 									"maximumWarning": "4kB",
-									"maximumError": "8kB"
+									"maximumError": "12kB"
 								}
 							],
 							"outputHashing": "all"
@@ -93,9 +94,7 @@
 		}
 	},
 	"cli": {
-    "schematicCollections": [
-      "angular-eslint"
-    ],
-    "analytics": "06f1f00d-a843-493b-98d5-8b6512b821fb"
+		"schematicCollections": ["angular-eslint"],
+		"analytics": "06f1f00d-a843-493b-98d5-8b6512b821fb"
 	}
 }

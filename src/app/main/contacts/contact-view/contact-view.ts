@@ -1,6 +1,6 @@
-import { Location } from "@angular/common";
 import { Component, inject, input, OnChanges, signal } from "@angular/core";
 import { Firestore } from "@angular/fire/firestore";
+import { Router } from "@angular/router";
 import { ContactService } from "@core/services/contact-service";
 import { EditContact } from "@main/contacts/edit-contact/edit-contact";
 import { Button } from "@shared/components/button/button";
@@ -52,7 +52,7 @@ export class ContactView implements OnChanges {
 	/** Injected contact service for contact management operations */
 	contactService = inject(ContactService);
 
-	location = inject(Location);
+	router = inject(Router);
 
 	/** Injected toast service for user notifications */
 	toastService = inject(ToastService);
@@ -100,7 +100,7 @@ export class ContactView implements OnChanges {
 	 * ```
 	 */
 	goBack() {
-		this.location.replaceState("/contacts");
+		this.router.navigate(["/contacts"]);
 	}
 
 	/**

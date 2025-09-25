@@ -1,5 +1,6 @@
 import { KeyValuePipe, Location } from "@angular/common";
 import { Component, EventEmitter, inject, input, Output, output } from "@angular/core";
+import { Router } from "@angular/router";
 import { ContactService } from "@core/services/contact-service";
 import { Button } from "@shared/components/button/button";
 
@@ -39,6 +40,7 @@ import { Button } from "@shared/components/button/button";
 export class ContactList {
 	/** Injected contact service for accessing organized contact data */
 	contactService = inject(ContactService);
+	router = inject(Router);
 
 	/** Injected router for contact navigation */
 	activeId = input<string>();
@@ -78,6 +80,8 @@ export class ContactList {
 	 */
 	onContactSelect(id: string | undefined) {
 		if (!id) return;
-		this.location.replaceState("/contacts", `id=${id}`);
+		this.router.navigate(["/contacts"], {
+			queryParams: { id },
+		});
 	}
 }

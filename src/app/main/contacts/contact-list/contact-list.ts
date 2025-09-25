@@ -1,4 +1,4 @@
-import { KeyValuePipe, Location } from "@angular/common";
+import { KeyValuePipe } from "@angular/common";
 import { Component, EventEmitter, inject, input, Output, output } from "@angular/core";
 import { Router } from "@angular/router";
 import { ContactService } from "@core/services/contact-service";
@@ -44,7 +44,6 @@ export class ContactList {
 
 	/** Injected router for contact navigation */
 	activeId = input<string>();
-	private location = inject(Location);
 
 	/** Emitted when the add contact button is clicked */
 	@Output() addContactClicked = new EventEmitter<void>();

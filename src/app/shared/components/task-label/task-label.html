@@ -1,0 +1,13 @@
+<span
+	class="label"
+	[class.user-story]="categoryClean() === 'userstory'"
+	[class.user-story]="categoryClean() === 'technicaltask'"
+>
+	@if (categoryClean() === "userstory") {
+		User Story
+	} @else if (categoryClean() === "technicaltask") {
+		Technical Task
+	} @else {
+		No Category
+	}
+</span>

@@ -105,6 +105,13 @@ export class Footer implements OnInit {
 	 * ```
 	 */
 	isActive(page: string): boolean {
-		return this.activePage === page;
+		const cleanPath = this.getCleanPath(this.activePage);
+		return cleanPath === page;
+	}
+
+	// returns the path without queryParams
+	getCleanPath(page: string): string {
+		const urlTree = this.router.parseUrl(page);
+		return urlTree.root.children["primary"].segments.map((segment) => segment.path).join("/");
 	}
 }

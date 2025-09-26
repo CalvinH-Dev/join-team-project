@@ -66,7 +66,9 @@ button {
 	transition:
 		background-color 125ms,
 		scale 125ms;
+	user-select: none;
 	cursor: pointer;
+	-webkit-tap-highlight-color: transparent;
 }
 
 button:hover {

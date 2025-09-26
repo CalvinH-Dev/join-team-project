@@ -3,11 +3,9 @@
 	[class.user-story]="categoryClean() === 'userstory'"
 	[class.technical-task]="categoryClean() === 'technicaltask'"
 >
-	@if (categoryClean() === "userstory") {
-		User Story
-	} @else if (categoryClean() === "technicaltask") {
-		Technical Task
-	} @else {
-		No Category
+	@for (cat of categories; track $index) {
+		@if (cat.name === categoryClean()) {
+			{{ cat.value }}
+		}
 	}
 </span>

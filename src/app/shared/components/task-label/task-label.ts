@@ -9,4 +9,8 @@ import { Component, computed, input } from "@angular/core";
 export class TaskLabel {
 	category = input<string>("");
 	categoryClean = computed(() => this.category().toLowerCase().trim().replace(/[- ]/g, ""));
+	categories = [
+		{ value: "User Story", name: "userstory" },
+		{ value: "Technical Task", name: "technicaltask" },
+	];
 }

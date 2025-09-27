@@ -1,0 +1,16 @@
+<div class="list" [class]="size()">
+	@for (contact of assigned(); track contact.id) {
+		@let max = 3;
+		@if ($index < max) {
+			<div class="container">
+				<app-profile-picture [contact]="contact" [size]="size()" />
+			</div>
+		} @else if ($index === max) {
+			<div class="container">
+				<div class="overflow-picture" [class]="size()">
+					<span>+{{ assigned().length - max }}</span>
+				</div>
+			</div>
+		}
+	}
+</div>

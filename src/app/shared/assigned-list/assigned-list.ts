@@ -1,10 +1,11 @@
+import { SlicePipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { Contact } from "@core/interfaces/contact";
 import { ProfilePicture } from "@shared/components/profile-picture/profile-picture";
 
 @Component({
 	selector: "app-assigned-list",
-	imports: [ProfilePicture],
+	imports: [ProfilePicture, SlicePipe],
 	templateUrl: "./assigned-list.html",
 	styleUrl: "./assigned-list.scss",
 })

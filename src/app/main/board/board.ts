@@ -7,4 +7,15 @@ import { TaskView } from "./task-view/task-view";
 	templateUrl: "./board.html",
 	styleUrl: "./board.scss",
 })
-export class Board {}
+export class Board {
+   isTaskViewOpen = false;
+
+  openTaskView() {
+    this.isTaskViewOpen = true;
+  }
+
+  closeTaskView() {
+    this.isTaskViewOpen = false;
+  }
+
+}

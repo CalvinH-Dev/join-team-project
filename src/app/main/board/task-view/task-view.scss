@@ -1,0 +1,77 @@
+@use "../../../../styles/mixins";
+
+.main {
+	width: 300px;
+	height: 650px;
+	border-radius: 20px;
+	background: #fff;
+	box-shadow: 3px 3px 3px 3px rgba(0, 0, 0, 0.3);
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1000;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 12px;
+
+	header {
+		height: 5%;
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		.type {
+			border: none;
+			background-color: rgb(255, 147, 47);
+			padding: 2px 6px 2px 6px;
+			border-radius: 6px;
+		}
+	}
+
+	.content {
+		height: 85%;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+
+		.headline {
+			margin-top: 8px;
+      margin-bottom: 4px;
+
+			h1 {
+				font-size: 36px;
+				font-weight: 700;
+				margin-bottom: 4px;
+			}
+
+			.task-description {
+				font-size: 16px;
+			}
+		}
+
+    .task-due-date {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    .task-priority {
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+
+    .task-assignees {
+      margin-bottom: 8px;
+    }
+	}
+
+	footer {
+		height: 10%;
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+}

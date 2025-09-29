@@ -1,1 +1,51 @@
-<p>task-view works!</p>
+<div class="main">
+	<header class="task-header">
+		<div class="task-type">
+			<span class="type">User Story</span>
+		</div>
+		<div class="close">
+      <img src="/images/assets/close_cross.svg" alt="" />
+    </div>
+	</header>
+
+	<div class="content">
+		<div class="headline">
+      <h1 class="task-title">CSS Architecture Planning</h1>
+      <span class="task-description">
+        Define CSS naming conventions and structure.
+      </span>
+    </div>
+
+		<time class="task-due-date" datetime="2023-09-02">
+      Due: 02/09/2023
+    </time>
+		<span class="task-priority">
+      Priority: Urgent
+    </span>
+
+		<div class="task-assignees">
+			<span>Assigned To:</span>
+			<div>
+				<li class="assignee">
+					<span class="avatar" style="background-color: #007bff">SM</span>
+					Sofia Müller (You)
+				</li>
+				<li class="assignee">
+					<span class="avatar" style="background-color: #6f42c1">BZ</span>
+					Benedikt Ziegler
+				</li>
+			</div>
+		</div>
+
+		<div class="task-subtasks">
+			<span>Subtasks:</span>
+				<input type="checkbox" checked disabled /> Establish CSS Methodology
+				<input type="checkbox" checked disabled /> Setup Base Styles
+		</div>
+	</div>
+
+	<footer class="task-actions">
+		<app-button variant="edit" icon="images/contacs_section/edit.svg"> Edit </app-button>
+		<app-button variant="delete" icon="images/contacs_section/trash_icon.svg"> Delete </app-button>
+	</footer>
+</div>

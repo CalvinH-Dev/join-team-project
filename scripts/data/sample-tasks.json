@@ -1,0 +1,35 @@
+[
+  {
+    "id": "task-001",
+    "title": "Implement User Registration System",
+    "description": "Create complete user registration flow with email verification",
+    "category": "User Story",
+    "priority": "urgent",
+    "status": "in-progress",
+    "assignedContacts": ["contact-001", "contact-002"],
+    "dueDate": "2024-12-31",
+    "color": 0
+  },
+  {
+    "id": "task-002",
+    "title": "Database Schema Migration",
+    "description": "Update database schema to support new features",
+    "category": "Technical Task",
+    "priority": "medium",
+    "status": "todo",
+    "assignedContacts": ["contact-003"],
+    "dueDate": "2024-12-15",
+    "color": 1
+  },
+  {
+    "id": "task-003",
+    "title": "Performance Optimization Sprint",
+    "description": "Optimize application performance across all modules",
+    "category": "Technical Task",
+    "priority": "low",
+    "status": "in-progress",
+    "assignedContacts": ["contact-004", "contact-005"],
+    "dueDate": "2024-12-20",
+    "color": 2
+  }
+]

@@ -27,8 +27,13 @@
 				<div class="priority-headline">
 					<h3>Priority:</h3>
 				</div>
-				<div>
-					<span class="priority"> Urgent </span>
+				<div class="priority-tag">
+					<div>
+						<span class="priority"> Urgent </span>
+					</div>
+					<div class="priority-img">
+						<img src="/images/board_section/prio_alta.svg" alt="" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -64,7 +69,6 @@
 			</div>
 
 			<div class="subtasks">
-
 				<div class="subtask">
 					<div class="checkbox">
 						<input type="checkbox" />
@@ -82,13 +86,12 @@
 						<span> Setup Base Styles </span>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
 
 	<footer class="task-actions">
-		<app-button variant="edit" icon="images/contacs_section/edit.svg"> Edit </app-button>
+		<app-button variant="edit" icon="images/contacs_section/edit.svg" (click)="onEditClick()"> Edit </app-button>
 		<app-button variant="delete" icon="images/contacs_section/trash_icon.svg"> Delete </app-button>
 	</footer>
 </div>

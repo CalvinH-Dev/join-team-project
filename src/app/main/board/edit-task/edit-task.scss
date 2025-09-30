@@ -1,0 +1,23 @@
+@use "../../../../styles/mixins";
+
+.main {
+  position: fixed;
+  z-index: 1000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 310px;
+  height: 660px;
+  background: white;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+}
+
+@include mixins.desktop {
+	.main {
+		width: 70vw;
+		height: 80vh;
+		padding: 24px;
+		overflow-y: auto;
+  }
+}

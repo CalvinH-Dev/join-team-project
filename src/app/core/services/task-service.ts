@@ -7,8 +7,10 @@ import {
 	deleteDoc,
 	doc,
 	Firestore,
+	getDocs,
 	onSnapshot,
 	QuerySnapshot,
+	setDoc,
 	updateDoc,
 } from "@angular/fire/firestore";
 import { Task } from "@core/interfaces/task";
@@ -228,10 +230,36 @@ export class TaskService implements OnDestroy {
 	}
 
 	/**
-	 * Adds a new task to Firestore database.
+	 * Generates the next sequential task ID in format: task-001, task-002, etc.
+	 *
+	 * @returns Promise that resolves to the next available task ID
+	 * @private
+	 *
+	 * @example
+	 * ```typescript
+	 * const nextId = await this.generateNextTaskId(); // "task-043"
+	 * ```
+	 */
+	private async generateNextTaskId(): Promise<string> {
+		const tasksCol = collection(this.tasksFirestore, "tasks");
+		const snapshot = await getDocs(tasksCol);
+		let maxNum = 0;
+
+		snapshot.forEach((docSnapshot) => {
+			const match = docSnapshot.id.match(/^task-(\d+)$/);
+			if (match) {
+				maxNum = Math.max(maxNum, parseInt(match[1]));
+			}
+		});
+
+		return `task-${String(maxNum + 1).padStart(3, '0')}`;
+	}
+
+	/**
+	 * Adds a new task to Firestore database with custom sequential ID.
 	 *
 	 * @param task - Task object to add to database
-	 * @returns Promise that resolves to the document ID when task is successfully added
+	 * @returns Promise that resolves to the new task's ID (format: task-001)
 	 * @throws Error if task creation fails
 	 *
 	 * @example
@@ -259,6 +287,9 @@ export class TaskService implements OnDestroy {
 			console.log('[TaskService] Using Firestore collection:', tasksCol);
 
 			try {
+				const taskId = await this.generateNextTaskId();
+				console.log('[TaskService] Generated task ID:', taskId);
+
 				const now = new Date();
 				const taskData = {
 					title: task.title,
@@ -276,12 +307,11 @@ export class TaskService implements OnDestroy {
 
 				console.log('[TaskService] Task data being saved:', taskData);
 
-				const docRef = await addDoc(tasksCol, taskData);
+				await setDoc(doc(tasksCol, taskId), taskData);
 
-				console.log('[TaskService] Task successfully added with ID:', docRef.id);
-				console.log('[TaskService] Firebase document reference:', docRef);
+				console.log('[TaskService] Task successfully added with ID:', taskId);
 
-				return docRef.id;
+				return taskId;
 			} catch (error) {
 				console.error('[TaskService] Failed to add task:', error);
 				console.error('[TaskService] Error details:', {

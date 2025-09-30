@@ -1,0 +1,22 @@
+<div
+	class="popover"
+	[class.show]="show()"
+	[class.primary]="variant() === 'primary'"
+	[class.secondary]="variant() === 'secondary'"
+	[class.sharp-top-right]="sharpCorner() === 'topRight'"
+	[class.sharp-bottom-right]="sharpCorner() === 'bottomRight'"
+	[class.sharp-bottom-left]="sharpCorner() === 'bottomLeft'"
+	[class.sharp-top-left]="sharpCorner() === 'topLeft'"
+>
+	@if (title()) {
+		<span class="title">{{ title() }}</span>
+	}
+	<div class="options-container">
+		@for (option of options(); track $index) {
+			<button class="option" (click)="emitClick($index)" [class.right]="iconSide() === 'right'">
+				<img class="option-img" [src]="option.iconSrc" [alt]="option.iconAlt" />
+				<span class="option-text">{{ option.text }}</span>
+			</button>
+		}
+	</div>
+</div>

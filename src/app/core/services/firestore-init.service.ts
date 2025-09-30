@@ -1,8 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, getDocs, query, limit } from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc, getDocs, query, limit } from '@angular/fire/firestore';
 import { Task } from '@core/interfaces/task';
 import { Contact } from '@core/interfaces/contact';
 import { environment, firebaseConfig } from 'environment/environment';
+import sampleContactsData from '@data/sample-contacts.json';
+import sampleTasksData from '@data/sample-tasks.json';
 
 @Injectable({
   providedIn: 'root'
@@ -171,10 +173,11 @@ export class FirestoreInitService {
     }
 
     console.log('Creating tasks collection with sample data...');
-    const sampleTasks = this.getSampleTasks();
+    const sampleTasks = sampleTasksData as any[];
 
     for (const task of sampleTasks) {
-      await addDoc(tasksCol, {
+      const taskRef = doc(this.firestore, 'tasks', task.id);
+      await setDoc(taskRef, {
         ...task,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -201,242 +204,16 @@ export class FirestoreInitService {
     }
 
     console.log('Creating contacts collection with sample data...');
-    const sampleContacts = this.getSampleContacts();
+    const sampleContacts = sampleContactsData as any[];
 
     for (const contact of sampleContacts) {
-      await addDoc(contactsCol, contact);
+      const contactRef = doc(this.firestore, 'contacts', contact.id);
+      await setDoc(contactRef, contact);
     }
 
     console.log(`Created ${sampleContacts.length} sample contacts`);
   }
 
-
-  /**
-   * Generate sample task data covering all interface properties including subtasks
-   */
-  private getSampleTasks(): Partial<Task>[] {
-    const now = new Date();
-
-    return [
-      {
-        title: 'User Registration System',
-        description: 'Implement complete user registration flow with email verification and password validation',
-        category: 'User Story',
-        priority: 'urgent',
-        status: 'in-progress',
-        assignedContacts: ['contact-1', 'contact-2'], // Will be populated with real IDs later
-        dueDate: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-        color: 1,
-        subtasks: [
-          {
-            id: 'subtask-1-1',
-            title: 'Design registration form UI',
-            completed: true,
-            createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'subtask-1-2',
-            title: 'Implement email validation',
-            completed: true,
-            createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'subtask-1-3',
-            title: 'Add password strength validation',
-            completed: false,
-            createdAt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'subtask-1-4',
-            title: 'Setup email verification service',
-            completed: false,
-            createdAt: now
-          }
-        ]
-      },
-      {
-        title: 'Database Schema Migration',
-        description: 'Update database schema to support new user profile fields and optimize queries',
-        category: 'Technical Task',
-        priority: 'medium',
-        status: 'todo',
-        assignedContacts: ['contact-3'],
-        dueDate: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
-        color: 2,
-        subtasks: [
-          {
-            id: 'subtask-2-1',
-            title: 'Analyze current schema structure',
-            completed: false,
-            createdAt: now
-          },
-          {
-            id: 'subtask-2-2',
-            title: 'Create migration scripts',
-            completed: false,
-            createdAt: now
-          },
-          {
-            id: 'subtask-2-3',
-            title: 'Test migration on staging',
-            completed: false,
-            createdAt: now
-          }
-        ]
-      },
-      {
-        title: 'Mobile App Design Review',
-        description: 'Review and approve final mobile app mockups before development phase',
-        category: 'User Story',
-        priority: 'low',
-        status: 'done',
-        assignedContacts: ['contact-1', 'contact-4'],
-        dueDate: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-        color: 3,
-        subtasks: [
-          {
-            id: 'subtask-3-1',
-            title: 'Review homepage mockup',
-            completed: true,
-            createdAt: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'subtask-3-2',
-            title: 'Review user profile screens',
-            completed: true,
-            createdAt: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'subtask-3-3',
-            title: 'Approve final designs',
-            completed: true,
-            createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000)
-          }
-        ]
-      },
-      {
-        title: 'API Documentation Update',
-        description: 'Create comprehensive API documentation for all endpoints with examples and authentication details',
-        category: 'Technical Task',
-        priority: 'urgent',
-        status: 'todo',
-        assignedContacts: ['contact-2', 'contact-5'],
-        dueDate: new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000), // 21 days from now
-        color: 4,
-        subtasks: [
-          {
-            id: 'subtask-4-1',
-            title: 'Document authentication endpoints',
-            completed: false,
-            createdAt: now
-          },
-          {
-            id: 'subtask-4-2',
-            title: 'Document user management APIs',
-            completed: false,
-            createdAt: now
-          },
-          {
-            id: 'subtask-4-3',
-            title: 'Add code examples for each endpoint',
-            completed: false,
-            createdAt: now
-          },
-          {
-            id: 'subtask-4-4',
-            title: 'Setup interactive API explorer',
-            completed: false,
-            createdAt: now
-          }
-        ]
-      },
-      {
-        title: 'Performance Optimization Sprint',
-        description: 'Optimize application performance by implementing lazy loading, caching strategies, and code splitting',
-        category: 'Technical Task',
-        priority: 'medium',
-        status: 'in-progress',
-        assignedContacts: ['contact-3', 'contact-5'],
-        dueDate: new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000), // 10 days from now
-        color: 5,
-        subtasks: [
-          {
-            id: 'subtask-5-1',
-            title: 'Implement lazy loading for routes',
-            completed: true,
-            createdAt: new Date(now.getTime() - 4 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'subtask-5-2',
-            title: 'Add component-level code splitting',
-            completed: false,
-            createdAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000)
-          },
-          {
-            id: 'subtask-5-3',
-            title: 'Setup Redis caching layer',
-            completed: false,
-            createdAt: now
-          },
-          {
-            id: 'subtask-5-4',
-            title: 'Optimize database queries',
-            completed: false,
-            createdAt: now
-          },
-          {
-            id: 'subtask-5-5',
-            title: 'Run performance benchmarks',
-            completed: false,
-            createdAt: now
-          }
-        ]
-      }
-    ];
-  }
-
-  /**
-   * Generate sample contact data covering all interface properties
-   */
-  private getSampleContacts(): Partial<Contact>[] {
-    return [
-      {
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        telephone: '+1-555-0123',
-        color: 1,
-        initials: 'JD'
-      },
-      {
-        name: 'Sarah Miller',
-        email: 'sarah.miller@example.com',
-        telephone: '+1-555-0456',
-        color: 2,
-        initials: 'SM'
-      },
-      {
-        name: 'Michael Johnson',
-        email: 'michael.johnson@example.com',
-        telephone: '+1-555-0789',
-        color: 3,
-        initials: 'MJ'
-      },
-      {
-        name: 'Emily Davis',
-        email: 'emily.davis@example.com',
-        telephone: '+1-555-0321',
-        color: 4,
-        initials: 'ED'
-      },
-      {
-        name: 'David Wilson',
-        email: 'david.wilson@example.com',
-        telephone: '+1-555-0654',
-        color: 5,
-        initials: 'DW'
-      }
-    ];
-  }
 
   /**
    * Validate Firebase environment configuration

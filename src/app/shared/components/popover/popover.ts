@@ -1,35 +1,44 @@
-import { Component, input, output } from "@angular/core";
-
-interface PopoverOption {
-	text: string;
-	iconSrc: string;
-	iconAlt?: string;
-}
-
-interface Corners {
-	topRight?: boolean;
-	bottomRight?: boolean;
-	bottomLeft?: boolean;
-	topLeft?: boolean;
-}
+import { Component, HostBinding, input } from "@angular/core";
+import { PopoverDirective } from "@core/directives/popover-directive";
 
 @Component({
+	hostDirectives: [PopoverDirective],
 	selector: "app-popover",
 	imports: [],
 	templateUrl: "./popover.html",
 	styleUrl: "./popover.scss",
 })
 export class Popover {
-	show = input<boolean>(false);
-	title = input<string>("");
-	options = input<PopoverOption[]>([]);
-	iconSide = input<"left" | "right">("left");
 	variant = input<"primary" | "secondary">("primary");
 	sharpCorner = input<"topRight" | "bottomRight" | "bottomLeft" | "topLeft">("topRight");
 
-	clicked = output<number>();
+	@HostBinding("class.primary")
+	get isPrimary() {
+		return this.variant() === "primary";
+	}
 
-	emitClick(index: number) {
-		this.clicked.emit(index);
+	@HostBinding("class.secondary")
+	get isSecondary() {
+		return this.variant() === "secondary";
+	}
+
+	@HostBinding("class.sharp-top-right")
+	get sharpTopRight() {
+		return this.sharpCorner() === "topRight";
+	}
+
+	@HostBinding("class.sharp-bottom-right")
+	get sharpBottomRight() {
+		return this.sharpCorner() === "bottomRight";
+	}
+
+	@HostBinding("class.sharp-bottom-left")
+	get sharpBottomLeft() {
+		return this.sharpCorner() === "bottomLeft";
+	}
+
+	@HostBinding("class.sharp-top-left")
+	get sharpTopLeft() {
+		return this.sharpCorner() === "topLeft";
 	}
 }

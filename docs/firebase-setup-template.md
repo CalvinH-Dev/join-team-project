@@ -21,7 +21,10 @@ npm run migrate:tasks
 # Migrate only contacts collection
 npm run migrate:contacts
 
-# Migrate both collections
+# Migrate only boards collection
+npm run migrate:boards
+
+# Migrate all collections
 npm run migrate:all
 
 # Full Firebase setup (project creation + manual DB setup required)
@@ -71,9 +74,17 @@ The migration scripts provide selective control:
   - Complete contact profiles with names, emails, phone numbers
 - **Contact properties**: name, email, telephone, color, initials
 
+#### Boards Migration (`npm run migrate:boards`)
+- **Creates `boards` collection** with sample board data
+- **Sample data includes**:
+  - Board entries linking tasks to status columns
+  - Assigned contacts for each board entry
+  - Order positions for drag & drop functionality
+- **Board properties**: taskId, status, assignedContacts, order, createdAt, updatedAt
+
 #### Combined Migration (`npm run migrate:all`)
-- **Runs both tasks and contacts migration**
-- **Sequential execution**: tasks first, then contacts
+- **Runs all migrations**: tasks, contacts, and boards
+- **Sequential execution**: tasks first, then contacts, then boards
 - **Individual collection verification**
 
 ### Manual Collection Setup
@@ -112,6 +123,19 @@ If automatic scripts fail, create collections manually:
 }
 ```
 
+```javascript
+// Sample board document structure
+{
+  id: "board-001",
+  taskId: "task-001",
+  status: "in-progress",
+  assignedContacts: ["contact-001", "contact-002"],
+  order: 0,
+  createdAt: timestamp,
+  updatedAt: timestamp
+}
+```
+
 ## Database Verification
 
 After setup, verify collections:
@@ -146,7 +170,7 @@ npm run reset:firebase
 ```
 
 This will:
-- Delete ALL data from Firestore (tasks & contacts)
+- Delete ALL data from Firestore (tasks, contacts & boards)
 - Reset environment.ts to shared test database
 - Clear project info files
 - Require confirmation (y/N) before proceeding

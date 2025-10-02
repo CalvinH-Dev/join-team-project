@@ -1,0 +1,44 @@
+[
+  {
+    "id": "board-001",
+    "taskId": "task-001",
+    "status": "in-progress",
+    "assignedContacts": ["contact-001", "contact-002"],
+    "order": 0
+  },
+  {
+    "id": "board-002",
+    "taskId": "task-002",
+    "status": "todo",
+    "assignedContacts": ["contact-003"],
+    "order": 0
+  },
+  {
+    "id": "board-003",
+    "taskId": "task-003",
+    "status": "in-progress",
+    "assignedContacts": ["contact-001", "contact-004"],
+    "order": 1
+  },
+  {
+    "id": "board-004",
+    "taskId": "task-004",
+    "status": "await-feedback",
+    "assignedContacts": ["contact-002", "contact-003"],
+    "order": 0
+  },
+  {
+    "id": "board-005",
+    "taskId": "task-005",
+    "status": "done",
+    "assignedContacts": ["contact-005"],
+    "order": 0
+  },
+  {
+    "id": "board-006",
+    "taskId": "task-006",
+    "status": "todo",
+    "assignedContacts": [],
+    "order": 1
+  }
+]

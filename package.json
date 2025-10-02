@@ -16,7 +16,8 @@
 		"reset:firebase": "ts-node --project scripts/tsconfig.json scripts/reset-firebase.ts",
 		"migrate:tasks": "ts-node --project scripts/tsconfig.json scripts/migrate-tasks.ts",
 		"migrate:contacts": "ts-node --project scripts/tsconfig.json scripts/migrate-contacts.ts",
-		"migrate:all": "npm run migrate:tasks && npm run migrate:contacts"
+		"migrate:boards": "ts-node --project scripts/tsconfig.json scripts/migrate-boards.ts",
+		"migrate:all": "npm run migrate:tasks && npm run migrate:contacts && npm run migrate:boards"
 	},
 	"private": true,
 	"dependencies": {

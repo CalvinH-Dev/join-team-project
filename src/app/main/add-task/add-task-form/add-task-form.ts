@@ -14,7 +14,7 @@ export class AddTaskForm {
 	dueDate = "";
 	category = "";
 	subtask = "";
-
+  
 	// MULTI-SELECT: store multiple assigned users
 	assignedTo: string[] = [];
 
@@ -48,6 +48,7 @@ export class AddTaskForm {
 	onCategoryClick() {
 		this.categoryDropdownOpen = !this.categoryDropdownOpen;
 	}
+
 
 	// Category select
 	selectCategory(cat: string) {

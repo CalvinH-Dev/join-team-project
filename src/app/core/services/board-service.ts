@@ -2,10 +2,14 @@ import { inject, Injectable, Injector, OnDestroy, runInInjectionContext } from "
 import { DocumentData } from "@angular/fire/compat/firestore";
 import {
 	collection,
+	deleteDoc,
 	doc,
 	Firestore,
+	getDocs,
 	onSnapshot,
 	QuerySnapshot,
+	setDoc,
+	updateDoc,
 } from "@angular/fire/firestore";
 import { Board } from "@core/interfaces/board";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -123,6 +127,130 @@ export class BoardService implements OnDestroy {
 			createdAt: data["createdAt"]?.toDate() || undefined,
 			updatedAt: data["updatedAt"]?.toDate() || undefined,
 		};
+	}
+
+	/**
+	 * Generates the next sequential board ID in format: board-001, board-002, etc.
+	 *
+	 * @returns Promise that resolves to the next available board ID
+	 * @private
+	 *
+	 * @example
+	 * ```typescript
+	 * const nextId = await this.generateNextBoardId(); // "board-015"
+	 * ```
+	 */
+	private async generateNextBoardId(): Promise<string> {
+		const boardsCol = collection(this.firestore, "boards");
+		const snapshot = await getDocs(boardsCol);
+		let maxNum = 0;
+
+		snapshot.forEach((docSnapshot) => {
+			const match = docSnapshot.id.match(/^board-(\d+)$/);
+			if (match) {
+				maxNum = Math.max(maxNum, parseInt(match[1]));
+			}
+		});
+
+		return `board-${String(maxNum + 1).padStart(3, '0')}`;
+	}
+
+	/**
+	 * Adds a task to the board with specified status.
+	 * Creates new board entry in 'boards' collection.
+	 *
+	 * @param taskId - ID of the task to add to board
+	 * @param status - Initial status for the board entry (default: 'todo')
+	 * @returns Promise that resolves to the new board ID
+	 * @throws Error if board creation fails
+	 *
+	 * @example
+	 * ```typescript
+	 * await this.boardService.addTaskToBoard('task-001', 'in-progress');
+	 * ```
+	 */
+	async addTaskToBoard(
+		taskId: string,
+		status: 'todo' | 'in-progress' | 'await-feedback' | 'done' = 'todo'
+	): Promise<string> {
+		return await runInInjectionContext(this.injector, async () => {
+			const boardsCol = collection(this.firestore, "boards");
+
+			try {
+				const boardId = await this.generateNextBoardId();
+				const now = new Date();
+
+				await setDoc(doc(boardsCol, boardId), {
+					taskId: taskId,
+					status: status,
+					assignedContacts: [],
+					order: 0,
+					createdAt: now,
+					updatedAt: now,
+				});
+
+				return boardId;
+			} catch (error) {
+				console.error('[BoardService] Failed to add task to board:', error);
+				throw error;
+			}
+		});
+	}
+
+	/**
+	 * Updates the status of a board entry (e.g., for drag & drop between columns).
+	 *
+	 * @param boardId - Firestore document ID of board to update
+	 * @param newStatus - New status to set
+	 * @returns Promise that resolves when board is updated
+	 * @throws Error if update fails
+	 *
+	 * @example
+	 * ```typescript
+	 * await this.boardService.updateBoardStatus('board-001', 'done');
+	 * ```
+	 */
+	async updateBoardStatus(
+		boardId: string,
+		newStatus: 'todo' | 'in-progress' | 'await-feedback' | 'done'
+	): Promise<void> {
+		if (!boardId) return;
+
+		const boardDoc = doc(this.firestore, "boards", boardId);
+		try {
+			await updateDoc(boardDoc, {
+				status: newStatus,
+				updatedAt: new Date(),
+			});
+		} catch (error) {
+			console.error('[BoardService] Failed to update board status:', error);
+			throw new Error("Failed to update board status");
+		}
+	}
+
+	/**
+	 * Removes a board entry from the boards collection.
+	 * Note: This does NOT delete the task itself, only the board entry.
+	 *
+	 * @param boardId - Firestore document ID of board to delete
+	 * @returns Promise that resolves when board is deleted
+	 * @throws Error if deletion fails or boardId is invalid
+	 *
+	 * @example
+	 * ```typescript
+	 * await this.boardService.removeFromBoard('board-001');
+	 * ```
+	 */
+	async removeFromBoard(boardId: string): Promise<void> {
+		if (!boardId) return;
+
+		const boardDoc = doc(this.firestore, "boards", boardId);
+		try {
+			await deleteDoc(boardDoc);
+		} catch (error) {
+			console.error('[BoardService] Failed to remove from board:', error);
+			throw new Error("Failed to remove from board");
+		}
 	}
 
 	ngOnDestroy() {

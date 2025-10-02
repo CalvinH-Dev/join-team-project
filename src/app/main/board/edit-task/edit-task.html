@@ -6,9 +6,9 @@
 	</header>
 
 	<div class="content">
-		<div class="form-scroll" role="region" aria-label="Add task form">
+		<div class="form-scroll" role="region" aria-label="Edit task form">
 			<div class="form-row">
-				<label class="label">Title <span class="required">*</span></label>
+				<label class="label">Title <span class="required"></span></label>
 				<input
 					class="input text-input"
 					type="text"
@@ -39,12 +39,11 @@
 						(blur)="descriptionFocus = false"
 						[ngClass]="{ focus: descriptionFocus }"
 					></textarea>
-					<img class="recurso-icon" src="images/add_task_section/recurso.svg" alt="Recurso Icon" />
 				</div>
 			</div>
 
 			<div class="form-row">
-				<label class="label">Due date <span class="required">*</span></label>
+				<label class="label">Due date <span class="required"></span></label>
 				<div class="input-with-icon">
 					<input
 						class="input date-input"
@@ -153,7 +152,7 @@
 			</div>
 
 			<div class="form-row">
-				<label class="label">Category <span class="required">*</span></label>
+				<label class="label">Category <span class="required"></span></label>
 				<div class="select-wrap" [class.focus]="categoryFocus">
 					<!-- Field -->
 					<div
@@ -200,20 +199,15 @@
 			<div class="bottom-spacer" aria-hidden="true"></div>
 		</div>
 
-		<div class="form-actions" role="toolbar" aria-label="Form actions">
-			<button class="btn-clear" type="button">
-				Clear <img src="images/assets/cancel_icon.svg" />
-			</button>
-			<button class="btn-create" type="button">
-				Create Task <img src="images/assets/check.svg" />
-			</button>
-		</div>
+
 	</div>
 
 	<footer class="task-actions">
-		<button>
-			OK
-			<img src="/images/assets/check.svg" alt="" />
-		</button>
+
+    <div class="form-actions" role="toolbar" aria-label="Form actions">
+			<button class="btn-create" type="button">
+				OK <img src="images/assets/check.svg" />
+			</button>
+		</div>
 	</footer>
 </div>

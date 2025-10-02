@@ -23,6 +23,9 @@ type BoardDictionary = Record<string, Board[]>;
 @Injectable({
 	providedIn: "root",
 })
+
+
+
 export class BoardService implements OnDestroy {
 	firestore = inject(Firestore);
 	injector = inject(Injector);
@@ -57,6 +60,7 @@ export class BoardService implements OnDestroy {
 	}
 
 	constructor() {
+		console.log('[BoardService] Constructor called - initializing...');
 		this.subscribeToBoardsCollection();
 	}
 
@@ -78,8 +82,18 @@ export class BoardService implements OnDestroy {
 						boards.push(board);
 					});
 
+					console.log(`[BoardService] Loaded ${boards.length} boards from Firestore`);
+
+					const organized = this.organizeByStatus(boards);
+					console.log('[BoardService] Boards by status:', {
+						todo: organized['todo'].length,
+						'in-progress': organized['in-progress'].length,
+						'await-feedback': organized['await-feedback'].length,
+						done: organized['done'].length
+					});
+
 					this.allBoardsSubject.next(boards);
-					this.boardsByStatusSubject.next(this.organizeByStatus(boards));
+					this.boardsByStatusSubject.next(organized);
 				},
 				(error) => {
 					console.error('[BoardService] Firestore error:', error);
@@ -189,6 +203,7 @@ export class BoardService implements OnDestroy {
 					updatedAt: now,
 				});
 
+				console.log(`[BoardService] Added board: ${boardId} (task: ${taskId}, status: ${status})`);
 				return boardId;
 			} catch (error) {
 				console.error('[BoardService] Failed to add task to board:', error);
@@ -222,6 +237,7 @@ export class BoardService implements OnDestroy {
 				status: newStatus,
 				updatedAt: new Date(),
 			});
+			console.log(`[BoardService] Updated board status: ${boardId} -> ${newStatus}`);
 		} catch (error) {
 			console.error('[BoardService] Failed to update board status:', error);
 			throw new Error("Failed to update board status");
@@ -247,6 +263,7 @@ export class BoardService implements OnDestroy {
 		const boardDoc = doc(this.firestore, "boards", boardId);
 		try {
 			await deleteDoc(boardDoc);
+			console.log(`[BoardService] Removed board: ${boardId}`);
 		} catch (error) {
 			console.error('[BoardService] Failed to remove from board:', error);
 			throw new Error("Failed to remove from board");

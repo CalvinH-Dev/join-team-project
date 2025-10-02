@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { BoardService } from "@core/services/board-service";
 import { TaskView } from "./task-view/task-view";
 
 @Component({
@@ -8,7 +9,9 @@ import { TaskView } from "./task-view/task-view";
 	styleUrl: "./board.scss",
 })
 export class Board {
-   isTaskViewOpen = false;
+	protected boardService = inject(BoardService);
+
+	isTaskViewOpen = false;
 
   openTaskView() {
     this.isTaskViewOpen = true;

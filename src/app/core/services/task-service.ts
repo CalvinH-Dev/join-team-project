@@ -2,6 +2,7 @@ import { inject, Injectable, Injector, OnDestroy, runInInjectionContext } from "
 import { DocumentData } from "@angular/fire/compat/firestore";
 import {
 	collection,
+	collectionData,
 	deleteDoc,
 	doc,
 	Firestore,
@@ -99,7 +100,7 @@ export class TaskService implements OnDestroy {
 	}
 
 	constructor() {
-		this.getTasksAsObject();
+		this.initializeTasksSubscription();
 	}
 
 	/**
@@ -122,16 +123,13 @@ export class TaskService implements OnDestroy {
 	}
 
 	/**
-	 * Establishes real-time subscription to all tasks in Firestore.
-	 * Automatically organizes tasks by status and updates Observable streams.
+	 * Initializes real-time subscription to all tasks in Firestore.
+	 * Automatically organizes tasks by status and updates BehaviorSubjects.
+	 * Called automatically in constructor.
 	 *
-	 * @example
-	 * ```typescript
-	 * // Called automatically in constructor
-	 * // Subscribe to tasksObject$ or allTasks$ in components
-	 * ```
+	 * @private
 	 */
-	private getTasksAsObject(): void {
+	private initializeTasksSubscription(): void {
 		runInInjectionContext(this.injector, () => {
 			const tasksCol = collection(this.tasksFirestore, "tasks");
 
@@ -153,6 +151,27 @@ export class TaskService implements OnDestroy {
 					console.error('[TaskService] Firestore error:', error);
 				}
 			);
+		});
+	}
+
+	/**
+	 * Returns an Observable stream of all tasks using collectionData.
+	 * This is a more reactive approach that doesn't store data in BehaviorSubjects.
+	 *
+	 * @returns Observable<Task[]> - Stream of all tasks from Firestore
+	 *
+	 * @example
+	 * ```typescript
+	 * // In component
+	 * this.taskService.getTasksAsObject().subscribe(tasks => {
+	 *   console.log('All tasks:', tasks);
+	 * });
+	 * ```
+	 */
+	getTasksAsObject(): Observable<Task[]> {
+		return runInInjectionContext(this.injector, () => {
+			const tasksCol = collection(this.tasksFirestore, "tasks");
+			return collectionData(tasksCol, { idField: "id" }) as Observable<Task[]>;
 		});
 	}
 

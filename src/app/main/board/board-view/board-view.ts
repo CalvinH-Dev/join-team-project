@@ -1,5 +1,5 @@
 import { Component, inject, input, OnChanges, signal } from "@angular/core";
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { Firestore } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 
@@ -43,12 +43,13 @@ export class BoardView implements OnChanges {
   doneTasks = signal<Task[]>([]);
 
   // Array, das alle Tasks hält (optional, wenn der Service direkt die Streams liefert)
-  allTasks = signal<Task[]>([]);
+  allTasks:Task[] = []
 
   // --- LIFECYCLE HOOKS ---
 
   constructor() {
     this.loadTasks();
+    this.allTasks = this.taskService.allTasks
   }
 
   ngOnChanges() {

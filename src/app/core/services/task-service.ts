@@ -7,13 +7,11 @@ import {
 	doc,
 	Firestore,
 	getDocs,
-	onSnapshot,
-	QuerySnapshot,
 	setDoc,
 	updateDoc,
 } from "@angular/fire/firestore";
 import { Task } from "@core/interfaces/task";
-import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { map, shareReplay } from "rxjs/operators";
 
 type TaskDictionary = Record<string, Task[]>;
@@ -57,15 +55,6 @@ export class TaskService implements OnDestroy {
 	/** Observable stream of tasks organized by status, derived from allTasks$ */
 	tasksObject$!: Observable<TaskDictionary>;
 
-	/** BehaviorSubject for currently selected task (dynamic updates via getDocumentById) */
-	private taskForViewSubject = new BehaviorSubject<Task | undefined>(undefined);
-
-	/** Observable stream of currently selected task */
-	taskForView$ = this.taskForViewSubject.asObservable();
-
-	/** Cleanup function for single task subscription */
-	private unsubscribeTaskForView: (() => void) | null = null;
-
 	/**
 	 * @deprecated Use tasksObject$ Observable instead
 	 * Getter for backward compatibility - returns current snapshot
@@ -86,13 +75,6 @@ export class TaskService implements OnDestroy {
 		return result;
 	}
 
-	/**
-	 * @deprecated Use taskForView$ Observable instead
-	 * Getter for backward compatibility - returns current snapshot
-	 */
-	get taskForView(): Task | undefined {
-		return this.taskForViewSubject.value;
-	}
 
 	constructor() {
 		// Initialize Observables
@@ -158,30 +140,6 @@ export class TaskService implements OnDestroy {
 		return this.allTasks$;
 	}
 
-	/**
-	 * Subscribes to a specific task document by ID for real-time updates.
-	 * Updates taskForView$ Observable stream.
-	 *
-	 * @param taskId - Firestore document ID of the task
-	 *
-	 * @example
-	 * ```typescript
-	 * this.taskService.getDocumentById('task-id-123');
-	 * // Subscribe to this.taskService.taskForView$ in component
-	 * ```
-	 */
-	getDocumentById(taskId: string): void {
-		runInInjectionContext(this.injector, () => {
-			const task = doc(this.tasksFirestore, "tasks", taskId);
-			this.unsubscribeTaskForView = onSnapshot(task, (snapshot) => {
-				if (snapshot.exists()) {
-					this.taskForViewSubject.next(this.buildDocument(snapshot.id, snapshot.data()));
-				} else {
-					this.taskForViewSubject.next(undefined);
-				}
-			});
-		});
-	}
 
 	private createStatusObject(tasksArr: Task[]): TaskDictionary {
 		const tasksObject: TaskDictionary = {
@@ -227,7 +185,7 @@ export class TaskService implements OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.unsubscribeTaskForView?.();
+		// Cleanup if needed
 	}
 
 	/**

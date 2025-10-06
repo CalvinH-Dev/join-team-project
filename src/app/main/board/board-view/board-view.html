@@ -1,1 +1,77 @@
-<p>board-view works!</p>
+<div class="board-container">
+	<header class="board-header">
+		<h1 class="board-title">Board</h1>
+		<div class="header-controls">
+			<app-search-field (searchText)="onSearch($event)"></app-search-field>
+
+			<app-button
+				(click)="openAddTaskOverlay()"
+				title="Add task"
+				icon="images/board_section/add_icon.svg"
+			>
+				Add task
+			</app-button>
+		</div>
+	</header>
+
+	<main class="board-columns">
+		<div class="column-status">
+			<h2 class="column-title">To Do</h2>
+			<div class="btn-overlay"></div>
+			<!-- 			<app-button
+				(click)="openAddTaskOverlay()"
+				title="Add task"
+				icon="images/board_section/plus_button.svg"
+			>
+			</app-button> -->
+			<div class="column-body">
+				<app-board-card
+					*ngFor="let task of todoTasks()"
+					[task]="task"
+					(cardClicked)="router.navigate(['/main/task-view', $event])"
+				></app-board-card>
+			</div>
+		</div>
+
+		<div class="column-status">
+			<h2 class="column-title">In Progress</h2>
+			<div class="btn-overlay"></div>
+			<app-board-card
+				*ngFor="let task of todoTasks()"
+				[task]="task"
+				(cardClicked)="router.navigate(['/main/task-view', $event])"
+			></app-board-card>
+			<div class="column-body">
+				<app-board-card
+					*ngFor="let task of inProgressTasks()"
+					[task]="task"
+					(click)="router.navigate(['/main/task-view', task.id])"
+				></app-board-card>
+			</div>
+		</div>
+
+		<div class="column-status">
+			<h2 class="column-title">Awaiting Feedback</h2>
+			<div class="btn-overlay"></div>
+			<div class="column-body">
+				<app-board-card
+					*ngFor="let task of feedbackTasks()"
+					[task]="task"
+					(click)="router.navigate(['/main/task-view', task.id])"
+				></app-board-card>
+			</div>
+		</div>
+
+		<div class="column-status">
+			<h2 class="column-title">Done</h2>
+			<div class="btn-overlay"></div>
+			<div class="column-body">
+				<app-board-card
+					*ngFor="let task of doneTasks()"
+					[task]="task"
+					(click)="router.navigate(['/main/task-view', task.id])"
+				></app-board-card>
+			</div>
+		</div>
+	</main>
+</div>

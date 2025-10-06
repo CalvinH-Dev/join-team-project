@@ -13,8 +13,8 @@ import {
 	updateDoc,
 } from "@angular/fire/firestore";
 import { Task } from "@core/interfaces/task";
-import { BehaviorSubject, Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
+import { map, shareReplay } from "rxjs/operators";
 
 type TaskDictionary = Record<string, Task[]>;
 
@@ -51,56 +51,68 @@ export class TaskService implements OnDestroy {
 	// Tasks-spezifische Firestore (falls verfügbar)
 	private tasksFirestore = this.getTasksFirestore();
 
-	/** BehaviorSubject for currently selected task */
+	/** Observable stream of all tasks from Firestore with shared subscription */
+	allTasks$!: Observable<Task[]>;
+
+	/** Observable stream of tasks organized by status, derived from allTasks$ */
+	tasksObject$!: Observable<TaskDictionary>;
+
+	/** BehaviorSubject for currently selected task (dynamic updates via getDocumentById) */
 	private taskForViewSubject = new BehaviorSubject<Task | undefined>(undefined);
-
-	/** BehaviorSubject for tasks organized by status */
-	private tasksObjectSubject = new BehaviorSubject<TaskDictionary>({});
-
-	/** BehaviorSubject for all tasks as flat array */
-	private allTasksSubject = new BehaviorSubject<Task[]>([]);
 
 	/** Observable stream of currently selected task */
 	taskForView$ = this.taskForViewSubject.asObservable();
-
-	/** Observable stream of tasks organized by status */
-	tasksObject$ = this.tasksObjectSubject.asObservable();
-
-	/** Observable stream of all tasks */
-	allTasks$ = this.allTasksSubject.asObservable();
-
-	/** Cleanup function for tasks collection subscription */
-	private unsubscribeTasksObject: (() => void) | null = null;
 
 	/** Cleanup function for single task subscription */
 	private unsubscribeTaskForView: (() => void) | null = null;
 
 	/**
 	 * @deprecated Use tasksObject$ Observable instead
-	 * Getter for backward compatibility
+	 * Getter for backward compatibility - returns current snapshot
 	 */
 	get tasksObject(): TaskDictionary {
-		return this.tasksObjectSubject.value;
+		let result: TaskDictionary = {};
+		this.tasksObject$.pipe().subscribe(val => result = val).unsubscribe();
+		return result;
 	}
 
 	/**
 	 * @deprecated Use allTasks$ Observable instead
-	 * Getter for backward compatibility
+	 * Getter for backward compatibility - returns current snapshot
 	 */
 	get allTasks(): Task[] {
-		return this.allTasksSubject.value;
+		let result: Task[] = [];
+		this.allTasks$.pipe().subscribe(val => result = val).unsubscribe();
+		return result;
 	}
 
 	/**
 	 * @deprecated Use taskForView$ Observable instead
-	 * Getter for backward compatibility
+	 * Getter for backward compatibility - returns current snapshot
 	 */
 	get taskForView(): Task | undefined {
 		return this.taskForViewSubject.value;
 	}
 
 	constructor() {
-		this.initializeTasksSubscription();
+		// Initialize Observables
+		runInInjectionContext(this.injector, () => {
+			const tasksCol = collection(this.tasksFirestore, "tasks");
+
+			// Create shared Observable stream for all tasks
+			this.allTasks$ = collectionData(tasksCol, { idField: "id" }).pipe(
+				map((rawTasks: any[]) => {
+					// Transform raw Firestore data to Task objects
+					return rawTasks.map((rawTask) => this.buildDocument(rawTask.id, rawTask));
+				}),
+				shareReplay(1) // Share one Firestore subscription among all subscribers
+			);
+
+			// Derive tasksObject$ from allTasks$
+			this.tasksObject$ = this.allTasks$.pipe(
+				map((tasks) => this.createStatusObject(tasks))
+			);
+		});
 	}
 
 	/**
@@ -122,57 +134,28 @@ export class TaskService implements OnDestroy {
 		}
 	}
 
-	/**
-	 * Initializes real-time subscription to all tasks in Firestore.
-	 * Automatically organizes tasks by status and updates BehaviorSubjects.
-	 * Called automatically in constructor.
-	 *
-	 * @private
-	 */
-	private initializeTasksSubscription(): void {
-		runInInjectionContext(this.injector, () => {
-			const tasksCol = collection(this.tasksFirestore, "tasks");
-
-			this.unsubscribeTasksObject = onSnapshot(
-				tasksCol,
-				(snapshot: QuerySnapshot<DocumentData>) => {
-					const tasks: Task[] = [];
-
-					snapshot.forEach((doc) => {
-						const task = this.buildDocument(doc.id, doc.data());
-						tasks.push(task);
-					});
-
-					// Update BehaviorSubjects
-					this.allTasksSubject.next(tasks);
-					this.tasksObjectSubject.next(this.createStatusObject(tasks));
-				},
-				(error) => {
-					console.error('[TaskService] Firestore error:', error);
-				}
-			);
-		});
-	}
 
 	/**
-	 * Returns an Observable stream of all tasks using collectionData.
-	 * This is a more reactive approach that doesn't store data in BehaviorSubjects.
+	 * @deprecated Use allTasks$ Observable instead to avoid creating duplicate Firestore listeners.
+	 * This method now returns the shared allTasks$ Observable.
 	 *
-	 * @returns Observable<Task[]> - Stream of all tasks from Firestore
+	 * @returns Observable<Task[]> - Stream of all tasks
 	 *
 	 * @example
 	 * ```typescript
-	 * // In component
+	 * // Old way (deprecated)
 	 * this.taskService.getTasksAsObject().subscribe(tasks => {
+	 *   console.log('All tasks:', tasks);
+	 * });
+	 *
+	 * // New way (recommended)
+	 * this.taskService.allTasks$.subscribe(tasks => {
 	 *   console.log('All tasks:', tasks);
 	 * });
 	 * ```
 	 */
 	getTasksAsObject(): Observable<Task[]> {
-		return runInInjectionContext(this.injector, () => {
-			const tasksCol = collection(this.tasksFirestore, "tasks");
-			return collectionData(tasksCol, { idField: "id" }) as Observable<Task[]>;
-		});
+		return this.allTasks$;
 	}
 
 	/**
@@ -245,7 +228,6 @@ export class TaskService implements OnDestroy {
 
 	ngOnDestroy() {
 		this.unsubscribeTaskForView?.();
-		this.unsubscribeTasksObject?.();
 	}
 
 	/**

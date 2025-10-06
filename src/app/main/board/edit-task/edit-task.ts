@@ -1,6 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import { Firestore, doc, updateDoc } from "@angular/fire/firestore";
 import { FormsModule } from "@angular/forms";
+import { Task } from "@app/core/interfaces/task";
 
 @Component({
 	selector: "app-edit-task",
@@ -9,34 +11,157 @@ import { FormsModule } from "@angular/forms";
 	styleUrl: "./edit-task.scss",
 })
 export class EditTask {
+	@Input() taskData!: Task;
 	@Output() closed = new EventEmitter<void>();
+	@Output() taskUpdated = new EventEmitter<Task>();
+
+	firestore = inject(Firestore);
+
+	// Form fields
+	title = "";
+	description = "";
+	dueDate = "";
+	category: "User Story" | "Technical Task" = "User Story";
+	assignedTo = "";
+	selectedPriority: "low" | "medium" | "urgent" = "medium";
+
+	// Subtasks array (nicht optional, klar typisiert)
+	subtasks: {
+		id: string;
+		title: string;
+		completed: boolean;
+		createdAt?: Date;
+		isEditing?: boolean;
+	}[] = [];
+
+	// Eingabepuffer für neue Subtask
+	subtask = "";
+
+	// UI focus states
+	titleFocus = false;
+	descriptionFocus = false;
+	dueDateFocus = false;
+	categoryFocus = false;
+	assignedFocus = false;
+	subtaskFocus = false;
+	categoryTouched = false;
+
+	// Dropdown states
+	assignedDropdownOpen = false;
+	activeItem: string | null = null;
+
+	categoryDropdownOpen = false;
+	activeCategory: string | null = null;
+
+	ngOnInit() {
+		if (this.taskData) {
+			this.title = this.taskData.title;
+			this.description = this.taskData.description ?? "";
+			this.dueDate = this.taskData.dueDate
+				? new Date(this.taskData.dueDate).toISOString().split("T")[0]
+				: "";
+			this.category = this.taskData.category;
+			this.assignedTo = this.taskData.assignedContacts?.[0] ?? "";
+			this.selectedPriority = this.taskData.priority;
+			this.subtasks = this.taskData.subtasks ?? [];
+		}
+	}
+
+	async saveTask() {
+		const task = this.taskData;
+		if (!task?.id) return;
+
+		const taskRef = doc(this.firestore, "tasks", task.id);
+		await updateDoc(taskRef, {
+			title: this.title,
+			description: this.description,
+			dueDate: new Date(this.dueDate),
+			category: this.category as "User Story" | "Technical Task",
+			assignedContacts: [this.assignedTo],
+			priority: this.selectedPriority as "low" | "medium" | "urgent",
+			subtasks: this.subtasks,
+			updatedAt: new Date(),
+		});
+
+		this.taskUpdated.emit({
+			id: task.id,
+			title: this.title,
+			description: this.description,
+			dueDate: new Date(this.dueDate),
+			category: this.category as "User Story" | "Technical Task",
+			assignedContacts: [this.assignedTo],
+			priority: this.selectedPriority as "low" | "medium" | "urgent",
+			subtasks: this.subtasks,
+			updatedAt: new Date(),
+			status: task.status!,
+			createdAt: task.createdAt!,
+			color: task.color,
+		});
+
+		this.closeEditOverlay();
+	}
+
+	assignedContacts: string[] = [];
+
+	isAssigned(id: string): boolean {
+		return this.assignedContacts.includes(id);
+	}
+
+	toggleAssignment(id: string) {
+		if (this.isAssigned(id)) {
+			this.assignedContacts = this.assignedContacts.filter((cid) => cid !== id);
+		} else {
+			this.assignedContacts.push(id);
+		}
+	}
+
+	confirmSubtask() {
+		const trimmed = this.subtask.trim();
+		if (trimmed) {
+			this.subtasks.push({
+				id: crypto.randomUUID(),
+				title: trimmed,
+				completed: false,
+				createdAt: new Date(),
+				isEditing: false,
+			});
+			this.subtask = "";
+			this.subtaskFocus = false;
+		}
+	}
+
+	enableEditing(index: number) {
+		this.subtasks[index].isEditing = true;
+	}
+
+	confirmEdit(index: number) {
+		this.subtasks[index].isEditing = false;
+	}
+
+	cancelSubtask() {
+		this.subtask = "";
+		this.subtaskFocus = false;
+	}
+
+	onSubtaskBlur() {
+		setTimeout(() => {
+			if (!this.subtask.trim()) {
+				this.subtaskFocus = false;
+			}
+		}, 100);
+	}
+
+	removeSubtask(index: number) {
+		this.subtasks.splice(index, 1);
+	}
 
 	closeEditOverlay() {
 		this.closed.emit();
 	}
 
-	title = "";
-	description = "";
-	dueDate = "";
-	category = "";
-	subtask = "";
-	assignedTo = "";
-
-	titleFocus = false;
-	dueDateFocus = false;
-	categoryFocus = false;
-	descriptionFocus = false;
-	assignedFocus = false;
-	subtaskFocus = false;
-	categoryTouched = false;
-
-	selectedPriority = "";
 	setPriority(priority: string) {
-		this.selectedPriority = priority;
+		this.selectedPriority = priority as "low" | "medium" | "urgent";
 	}
-
-	assignedDropdownOpen = false;
-	activeItem: string | null = null;
 
 	onInputClick() {
 		this.assignedDropdownOpen = !this.assignedDropdownOpen;
@@ -52,16 +177,13 @@ export class EditTask {
 		}, 120);
 	}
 
-	categoryDropdownOpen = false;
-	activeCategory: string | null = null;
-
 	onCategoryClick() {
 		this.categoryDropdownOpen = !this.categoryDropdownOpen;
 	}
 
 	selectCategory(cat: string) {
 		this.activeCategory = cat;
-		this.category = cat;
+		this.category = cat as "User Story" | "Technical Task";
 
 		setTimeout(() => {
 			this.categoryDropdownOpen = false;

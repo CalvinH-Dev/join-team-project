@@ -11,7 +11,10 @@ import { BoardView } from "./board-view/board-view";
 	styleUrl: "./board.scss",
 })
 export class Board {
-   isTaskViewOpen = false;
+	isTaskViewOpen = false;
+	openTaskView() {
+		this.isTaskViewOpen = true;
+	}
 
 	vps = inject(ViewportScroller);
 	route = inject(ActivatedRoute);

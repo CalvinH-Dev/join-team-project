@@ -1,78 +1,192 @@
-import { Component, inject, input, OnChanges, signal } from "@angular/core";
+import { Component, inject, input, signal } from "@angular/core";
 import { CommonModule } from '@angular/common';
 import { Firestore } from "@angular/fire/firestore";
 import { Router } from "@angular/router";
 
-// Komponenten-Imports, die im HTML verwendet werden
+//  Imports für Angular CDK Drag and Drop
+import {
+  CdkDragDrop,
+  transferArrayItem,
+  DragDropModule,
+} from '@angular/cdk/drag-drop';
+
+// Komponenten-Imports
 import { Button } from "@shared/components/button/button";
 import { SearchField } from "@shared/components/search-field/search-field";
-
-//import { ToastAction } from "@shared/components/toast/toast";
 import { ToastService } from "@shared/services/toast.service";
 
 // Angenommener Import für Task-Datenstruktur und Service
 import { Task } from '@app/core/interfaces/task';
 import { TaskService } from '@app/core/services/task-service';
-import { TaskLabel } from "@shared/components/task-label/task-label";
 import { BoardCard } from "../board-card/board-card";
+import { TaskView } from "@app/main/board/task-view/task-view";
+
+// Definiere die Status-Schlüssel
+type TaskStatusKey = 'todo' | 'in-progress' | 'awaiting-feedback' | 'done';
+
+// 🆕 Konstante, die alle Status-IDs enthält
+const ALL_STATUS_KEYS: TaskStatusKey[] = ['todo', 'in-progress', 'awaiting-feedback', 'done'];
+
 
 @Component({
   selector: 'app-board-view',
-  imports: [CommonModule, Button, SearchField, BoardCard, TaskLabel],
+  // DragDropModule hinzugefügt, muss installiert werden!!!
+  imports: [CommonModule, Button, SearchField, BoardCard, TaskView, DragDropModule],
   templateUrl: './board-view.html',
-  styleUrl: './board-view.scss'
+  styleUrl: './board-view.scss',
+  standalone: true
 })
-export class BoardView implements OnChanges {
+export class BoardView {
 
+  // --- DEPENDENCIES ---
   firestore = inject(Firestore);
   router = inject(Router);
   toastService = inject(ToastService);
-
   taskService = inject(TaskService);
 
-
   // --- INPUTS & STATE ---
-  id = input<string>(""); // Wird vermutlich für die Detailansicht genutzt
-  isAddTaskOverlayOpen = signal(false); // Signal für den Overlay-Status (Boolean ist üblicher)
+  id = input<string>("");
+  isAddTaskOverlayOpen = signal(false);
+  selectedTaskId = signal<string | null>(null);
 
-  // --- TASK MANAGEMENT SIGNALS ---
-  // Signals für die gefilterten Aufgaben in den jeweiligen Spalten
+  //Liste der Status-IDs für cdkDropListConnectedTo
+  dropListIds = ALL_STATUS_KEYS;
+
   todoTasks = signal<Task[]>([]);
   inProgressTasks = signal<Task[]>([]);
   feedbackTasks = signal<Task[]>([]);
   doneTasks = signal<Task[]>([]);
 
-  // Array, das alle Tasks hält (optional, wenn der Service direkt die Streams liefert)
   allTasks:Task[] = []
 
-  // --- LIFECYCLE HOOKS ---
+  private filteredTasks = signal<Task[]>([]);
 
   constructor() {
-    this.loadTasks();
-    this.allTasks = this.taskService.allTasks
+      const tasksObject = this.taskService.tasksObject as Record<TaskStatusKey | string, Task[]>;
+      const allTasksFlat = this.taskService.allTasks;
+      this.filteredTasks.set(allTasksFlat);
+
+      // Filtere und setze die Spalten-Signals unter Verwendung der korrekten Status-Keys
+      this.todoTasks.set(tasksObject['todo'] || []);
+      this.inProgressTasks.set(tasksObject['in-progress'] || []);
+      this.feedbackTasks.set(tasksObject['awaiting-feedback'] || []);
+      this.doneTasks.set(tasksObject['done'] || []);
+
+      console.log('[BoardView Effect] Tasks updated from Service:', {
+          todo: this.todoTasks().length,
+          inProgress: this.inProgressTasks().length,
+          feedback: this.feedbackTasks().length,
+          done: this.doneTasks().length,
+          totalServiceTasks: allTasksFlat.length
+      });
   }
 
-  ngOnChanges() {
-    // Wenn sich die 'id' ändert, könnte man hier eine Task-Detailansicht laden
-    if (this.id()) {
-      //this.openTaskDetail(this.id());
+  // --- NEUE METHODEN FÜR DRAG & DROP ---
+
+  /**
+   * Wird aufgerufen, wenn ein Element in eine Drop-Zone verschoben wird.
+   * Aktualisiert das lokale Array und die Datenbank.
+   */
+  drop(event: CdkDragDrop<Task[]>) {
+    // Wenn das Element in der GLEICHEN Liste verschoben wurde
+    if (event.previousContainer === event.container) {
+      // Sortierung nach Priority erfolgt im TaskService
+    } else {
+      // Element wurde in eine ANDERE Liste verschoben (Status ändern)
+      // 1. Lokales Array aktualisieren (wird sofort im UI sichtbar)
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+
+      // 2. Hole die verschobene Task (sie befindet sich jetzt im neuen Array)
+      // das Task-Objekt aus den cdkDragData holen, das als 'Task' getypt ist
+      const movedTask = event.item.data as Task;
+
+      // 3. Bestimme den NEUEN Status (die ID der Ziel-Drop-Zone)
+      const newStatus = event.container.id as TaskStatusKey;
+
+      // 4. Datenbank-Aktualisierung auslösen
+      this.updateTaskStatus(movedTask.id!, newStatus);
     }
   }
 
-  // --- METHODEN ---
+  /**
+   * Aktualisiert den Status einer Task in der Datenbank (Firestore).
+   * @param taskId Die ID der Task.
+   * @param newStatus Der neue Status ('todo', 'in-progress', etc.).
+   */
+  updateTaskStatus(taskId: string, newStatus: TaskStatusKey) {
+    this.taskService.updateTask(taskId, { status: newStatus })
+      .then(() => {
+        // Die TaskService-onSnapshot-Funktion wird automatisch alle Tasks neu laden
+        // und die UI dank Angular Signals/Change Detection aktualisieren.
+        this.toastService.showSuccess('Task Status aktualisiert', `Die Task wurde nach "${this.formatStatus(newStatus)}" verschoben.`);
+      })
+      .catch((error) => {
+        console.error('Fehler beim Aktualisieren des Task-Status:', error);
+        this.toastService.showError('Fehler', 'Der Task-Status konnte in der Datenbank nicht aktualisiert werden.');
+      });
+  }
+
+  /** Hilfsfunktion zum Formatieren des Status für die Toast-Nachricht. */
+  private formatStatus(status: TaskStatusKey): string {
+    switch (status) {
+      case 'todo': return 'To Do';
+      case 'in-progress': return 'In Progress';
+      case 'awaiting-feedback': return 'Awaiting Feedback';
+      case 'done': return 'Done';
+      default: return status;
+    }
+  }
+
+  // --- METHODEN FÜR DIE DETAILANSICHT (Overlay Steuerung) ---
 
   /**
-   * Lädt alle Tasks über den TaskService und filtert sie in die Spalten.
+   * Öffnet die Task-Detailansicht (TaskView) für die gegebene Task-ID.
    */
-  loadTasks() {
-    // Beispiel: Angenommen, der TaskService liefert ein Observable von Tasks
-    // In einer echten Angular/RxJS-Anwendung würden Sie hier subscriben oder 'async' Pipe verwenden.
+  openTaskDetail(taskId: string) {
+    this.selectedTaskId.set(taskId);
+  }
 
-    // Simulierter initialer Ladevorgang:
-    const mockTasks: Task[] = this.taskService.getMockTasks(); // Annahme: TaskService hat eine Methode
+  /**
+   * Schließt die Task-Detailansicht (TaskView).
+   */
+  closeTaskDetail() {
+    this.selectedTaskId.set(null);
+  }
 
-    this.allTasks.set(mockTasks);
-    this.filterTasks(mockTasks);
+  /**
+   * Wird beim Bearbeiten-Klick aufgerufen. Navigiert zur Edit-Task-Seite.
+   */
+  editTask(taskId: string) {
+    this.router.navigate(['/main/task-edit', taskId]);
+  }
+
+  // --- METHODEN FÜR SUCHE ETC. ---
+
+  /**
+   * Filtert Tasks basierend auf dem Suchbegriff in Titel oder Beschreibung.
+   */
+  onSearch(term: string) {
+    const allTasksFlat = this.taskService.allTasks;
+
+    if (!term) {
+      this.filterTasks(allTasksFlat);
+      return;
+    }
+
+    const lowerTerm = term.toLowerCase();
+
+    // Filtere das flache Array
+    const filtered = allTasksFlat.filter((task: Task) =>
+      task.title.toLowerCase().includes(lowerTerm) ||
+      task.description?.toLowerCase().includes(lowerTerm)
+    );
+
+    this.filterTasks(filtered); // Wende den Filter an und aktualisiere die Spalten
   }
 
   /**
@@ -91,22 +205,5 @@ export class BoardView implements OnChanges {
   openAddTaskOverlay() {
     this.isAddTaskOverlayOpen.set(true);
     this.router.navigate(['/main/add-task']);
-  }
-
-  /**
-   * Wird vom SearchField verwendet, um Tasks zu filtern.
-   */
-  onSearch(term: string) {
-    if (!term) {
-      this.filterTasks(this.allTasks()); // Zeige alle, wenn kein Suchbegriff
-      return;
-    }
-
-    const filtered = this.allTasks().filter(task =>
-      task.title.toLowerCase().includes(term.toLowerCase()) ||
-      task.description.toLowerCase().includes(term.toLowerCase())
-    );
-
-    this.filterTasks(filtered);
   }
 }

@@ -4,11 +4,10 @@ import { Firestore, doc, updateDoc } from "@angular/fire/firestore";
 import { FormsModule } from "@angular/forms";
 import { Task } from "@app/core/interfaces/task";
 import { ContactService } from "@core/services/contact-service";
-import { ContactList } from "@main/contacts/contact-list/contact-list";
 
 @Component({
 	selector: "app-edit-task",
-	imports: [CommonModule, FormsModule, ContactList],
+	imports: [CommonModule, FormsModule],
 	templateUrl: "./edit-task.html",
 	styleUrl: "./edit-task.scss",
 })
@@ -29,7 +28,7 @@ export class EditTask {
 	assignedContacts: string[] = [];
 	selectedPriority: "low" | "medium" | "urgent" = "medium";
 
-	// Subtasks array (nicht optional, klar typisiert)
+	// Subtasks array
 	subtasks: {
 		id: string;
 		title: string;
@@ -38,7 +37,7 @@ export class EditTask {
 		isEditing?: boolean;
 	}[] = [];
 
-	// Eingabepuffer für neue Subtask
+	// Input buffer for new subtask
 	subtask = "";
 
 	// UI focus states

@@ -350,6 +350,8 @@
 		.subtask-item {
 			display: flex;
 			align-items: center;
+			justify-content: space-between;
+			width: 100%;
 			gap: 8px;
 			padding: 8px 12px;
 			border-radius: 8px;
@@ -410,23 +412,30 @@
 				width: 100%;
 				border-bottom: 2px solid var(--bg-color-blue-lighter);
 				padding-bottom: 4px;
+        padding-right: 12px;
 				gap: 8px;
+				flex-wrap: nowrap;
 
 				.subtask-edit-input {
-					flex: 1;
+					flex: 1 1 auto;
+					min-width: 0;
 					border: none;
 					outline: none;
-					font-weight: bold;
+					font-weight: 400;
 					font-size: var(--fs-small);
 					background: transparent;
 					color: #2a3647;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
 				}
 
 				.edit-actions {
 					display: flex;
-					justify-content: center;
 					align-items: center;
-					gap: 6px;
+					gap: 4px;
+					flex-shrink: 0;
+					margin-left: auto;
 
 					button {
 						background: none;
@@ -448,10 +457,6 @@
 
 						&:hover {
 							background-color: #2a3647;
-							border: none;
-							border-radius: 20px;
-							height: 26px;
-							width: 26px;
 						}
 					}
 				}

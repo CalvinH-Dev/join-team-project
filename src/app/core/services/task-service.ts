@@ -168,6 +168,7 @@ export class TaskService implements OnDestroy {
 	}
 
 	private buildDocument(id: string, data: DocumentData): Task {
+
 		return {
 			id,
 			title: data["title"] || "",
@@ -177,9 +178,9 @@ export class TaskService implements OnDestroy {
 			status: data["status"] || "todo",
 			assignedContacts: data["assignedContacts"] || [],
 			subtasks: data["subtasks"] || [],
-			dueDate: data["dueDate"]?.toDate() || undefined,
-			createdAt: data["createdAt"]?.toDate() || undefined,
-			updatedAt: data["updatedAt"]?.toDate() || undefined,
+      dueDate: data["dueDate"] || undefined,
+			createdAt: data["createdAt"] || undefined,
+			updatedAt: data["updatedAt"] || undefined,
 			color: data["color"],
 		};
 	}

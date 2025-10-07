@@ -50,7 +50,7 @@ export class AddTaskForm {
 	activeItem: string | null = null;
 	activeCategory: string | null = null;
 
-	selectedPriority = "";
+	selectedPriority = "medium";
 	setPriority(priority: string) {
 		this.selectedPriority = priority;
 	}

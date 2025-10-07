@@ -297,7 +297,7 @@
 
 			.subtask-input {
 				width: 100%;
-				padding-right: 70px; // Platz für Icons
+				padding-right: 70px;
 				border-radius: 12px;
 				padding: 12px 14px;
 				font-size: var(--fs-small);
@@ -356,7 +356,7 @@
 			transition: background-color 0.2s ease;
 
 			&:hover {
-				background-color: rgba(0, 0, 0, 0.05); // grauer Hintergrund
+				background-color: rgba(0, 0, 0, 0.05);
 			}
 
 			.subtask-actions {

@@ -42,7 +42,6 @@ export class BoardCard implements OnInit {
 
 		this.contactService.allContacts$.subscribe((contacts) => {
 			this.assignedContacts = contacts.filter((contact) => ids.includes(contact.id || ""));
-			console.log(this.assignedContacts);
 		});
 	}
 

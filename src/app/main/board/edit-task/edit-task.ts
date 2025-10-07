@@ -1,5 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  Renderer2,
+  inject,
+} from "@angular/core";
 import { Firestore, doc, updateDoc } from "@angular/fire/firestore";
 import { FormsModule } from "@angular/forms";
 import { Task } from "@app/core/interfaces/task";
@@ -12,6 +20,38 @@ import { ContactService } from "@core/services/contact-service";
 	styleUrl: "./edit-task.scss",
 })
 export class EditTask {
+	constructor(
+		private elementRef: ElementRef,
+		private renderer: Renderer2,
+	) {}
+
+	ngAfterViewInit(): void {
+		this.renderer.listen("document", "click", (event: MouseEvent) => {
+			const target = event.target as HTMLElement;
+			const clickedInside = this.elementRef.nativeElement.contains(target);
+
+			if (!clickedInside) {
+				this.assignedDropdownOpen = false;
+				this.categoryDropdownOpen = false;
+			}
+		});
+	}
+
+	toggleAssignedDropdown(event: MouseEvent): void {
+		event.stopPropagation();
+		this.assignedDropdownOpen = !this.assignedDropdownOpen;
+	}
+
+	onOverlayClick(event: MouseEvent): void {
+		const target = event.target as HTMLElement;
+		const clickedDropdown = target.closest(".select-wrap");
+
+		if (!clickedDropdown) {
+			this.assignedDropdownOpen = false;
+			this.categoryDropdownOpen = false;
+		}
+	}
+
 	@Input() taskData!: Task;
 	@Output() closed = new EventEmitter<void>();
 	@Output() taskUpdated = new EventEmitter<Task>();
@@ -152,8 +192,9 @@ export class EditTask {
 		this.selectedPriority = priority as "low" | "medium" | "urgent";
 	}
 
-	onInputClick() {
-		this.assignedDropdownOpen = !this.assignedDropdownOpen;
+	onInputClick(event: MouseEvent): void {
+		event.stopPropagation();
+		this.assignedDropdownOpen = true;
 	}
 
 	onCategoryClick() {
@@ -189,5 +230,4 @@ export class EditTask {
 			.map((c) => c.name)
 			.join(", ");
 	}
-
 }

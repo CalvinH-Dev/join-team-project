@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main"  (click)="onOverlayClick($event)">
 	<header class="task-header">
 		<div class="close" (click)="closeEditOverlay()">
 			<img src="/images/assets/close_cross.svg" alt="" />
@@ -127,17 +127,9 @@
 			<div class="form-row">
 				<label class="label">Assigned to</label>
 				<div class="select-wrap" [class.focus]="assignedFocus">
-					<div
-						class="select-input"
-						(click)="onInputClick()"
-						(focus)="assignedFocus = true"
-						(blur)="assignedFocus = false"
-						tabindex="0"
-					>
-						{{
-							assignedContacts.length > 0 ? assignedContactsDisplay() : "Select contacts to assign"
-						}}
-						<span class="select-arrow" aria-hidden>
+					<div class="select-input" (click)="toggleAssignedDropdown($event)" tabindex="0">
+						Select contacts to assign
+						<span class="select-arrow">
 							<img src="images/add_task_section/arrow_drop_downaa.svg" />
 						</span>
 					</div>

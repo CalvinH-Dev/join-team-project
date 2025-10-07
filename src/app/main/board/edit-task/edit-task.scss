@@ -233,6 +233,64 @@
 			pointer-events: none;
 		}
 
+		.selected-initials {
+			display: flex;
+			gap: 8px;
+			margin-top: 8px;
+			flex-wrap: wrap;
+		}
+
+		.initial-circle {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			font-weight: 400;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.8rem;
+			cursor: default;
+		}
+
+		.dropdown-contact {
+			padding: 8px 12px;
+			display: flex;
+			align-items: center;
+
+			label {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+				width: 100%;
+				cursor: pointer;
+			}
+
+			input[type="checkbox"] {
+				accent-color: #2a3647;
+				width: 16px;
+				height: 16px;
+			}
+
+			.avatar {
+				width: 32px;
+				height: 32px;
+				border-radius: 50%;
+				font-weight: 400;
+				color: white;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 0.9rem;
+			}
+
+			.contact-name {
+				font-weight: 500;
+				color: #2a3647;
+				font-size: 0.95rem;
+			}
+		}
+
 		.subtask-input-group {
 			position: relative;
 			width: 100%;
@@ -423,7 +481,7 @@
 			&:hover {
 				background: #284361;
 				cursor: pointer;
-        box-shadow: 1px 1px 8px 1px #43505e;
+				box-shadow: 1px 1px 8px 1px #43505e;
 			}
 		}
 	}

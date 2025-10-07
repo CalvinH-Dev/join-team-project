@@ -3,10 +3,12 @@ import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { Firestore, doc, updateDoc } from "@angular/fire/firestore";
 import { FormsModule } from "@angular/forms";
 import { Task } from "@app/core/interfaces/task";
+import { ContactService } from "@core/services/contact-service";
+import { ContactList } from "@main/contacts/contact-list/contact-list";
 
 @Component({
 	selector: "app-edit-task",
-	imports: [CommonModule, FormsModule],
+	imports: [CommonModule, FormsModule, ContactList],
 	templateUrl: "./edit-task.html",
 	styleUrl: "./edit-task.scss",
 })
@@ -15,6 +17,8 @@ export class EditTask {
 	@Output() closed = new EventEmitter<void>();
 	@Output() taskUpdated = new EventEmitter<Task>();
 
+	contactService = inject(ContactService);
+
 	firestore = inject(Firestore);
 
 	// Form fields
@@ -22,7 +26,7 @@ export class EditTask {
 	description = "";
 	dueDate = "";
 	category: "User Story" | "Technical Task" = "User Story";
-	assignedTo = "";
+	assignedContacts: string[] = [];
 	selectedPriority: "low" | "medium" | "urgent" = "medium";
 
 	// Subtasks array (nicht optional, klar typisiert)
@@ -61,7 +65,7 @@ export class EditTask {
 				? new Date(this.taskData.dueDate).toISOString().split("T")[0]
 				: "";
 			this.category = this.taskData.category;
-			this.assignedTo = this.taskData.assignedContacts?.[0] ?? "";
+			this.assignedContacts = this.taskData.assignedContacts ?? [];
 			this.selectedPriority = this.taskData.priority;
 			this.subtasks = this.taskData.subtasks ?? [];
 		}
@@ -77,7 +81,7 @@ export class EditTask {
 			description: this.description,
 			dueDate: new Date(this.dueDate),
 			category: this.category as "User Story" | "Technical Task",
-			assignedContacts: [this.assignedTo],
+			assignedContacts: this.assignedContacts,
 			priority: this.selectedPriority as "low" | "medium" | "urgent",
 			subtasks: this.subtasks,
 			updatedAt: new Date(),
@@ -89,7 +93,7 @@ export class EditTask {
 			description: this.description,
 			dueDate: new Date(this.dueDate),
 			category: this.category as "User Story" | "Technical Task",
-			assignedContacts: [this.assignedTo],
+			assignedContacts: this.assignedContacts,
 			priority: this.selectedPriority as "low" | "medium" | "urgent",
 			subtasks: this.subtasks,
 			updatedAt: new Date(),
@@ -99,20 +103,6 @@ export class EditTask {
 		});
 
 		this.closeEditOverlay();
-	}
-
-	assignedContacts: string[] = [];
-
-	isAssigned(id: string): boolean {
-		return this.assignedContacts.includes(id);
-	}
-
-	toggleAssignment(id: string) {
-		if (this.isAssigned(id)) {
-			this.assignedContacts = this.assignedContacts.filter((cid) => cid !== id);
-		} else {
-			this.assignedContacts.push(id);
-		}
 	}
 
 	confirmSubtask() {
@@ -167,16 +157,6 @@ export class EditTask {
 		this.assignedDropdownOpen = !this.assignedDropdownOpen;
 	}
 
-	selectAssigned(name: string) {
-		this.activeItem = name;
-		this.assignedTo = name;
-
-		setTimeout(() => {
-			this.assignedDropdownOpen = false;
-			this.activeItem = null;
-		}, 120);
-	}
-
 	onCategoryClick() {
 		this.categoryDropdownOpen = !this.categoryDropdownOpen;
 	}
@@ -190,4 +170,25 @@ export class EditTask {
 			this.activeCategory = null;
 		}, 120);
 	}
+
+	isAssigned(id: string): boolean {
+		return this.assignedContacts.includes(id);
+	}
+
+	toggleAssignment(id: string) {
+		if (this.isAssigned(id)) {
+			this.assignedContacts = this.assignedContacts.filter((cid) => cid !== id);
+		} else {
+			this.assignedContacts.push(id);
+		}
+	}
+
+	assignedContactsDisplay(): string {
+		const allContacts = Object.values(this.contactService.contactsObject).flat();
+		return allContacts
+			.filter((c) => c.id && this.assignedContacts.includes(c.id))
+			.map((c) => c.name)
+			.join(", ");
+	}
+
 }

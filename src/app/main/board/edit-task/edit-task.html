@@ -134,22 +134,52 @@
 						(blur)="assignedFocus = false"
 						tabindex="0"
 					>
-						{{ assignedTo || "Select contacts to assign" }}
+						{{
+							assignedContacts.length > 0 ? assignedContactsDisplay() : "Select contacts to assign"
+						}}
 						<span class="select-arrow" aria-hidden>
 							<img src="images/add_task_section/arrow_drop_downaa.svg" />
 						</span>
 					</div>
 
-					<ul class="dropdown-list" *ngIf="assignedDropdownOpen">
-						<li
-							*ngFor="let person of ['Madina', 'Calvin', 'Falko', 'Christoph', 'Philip']"
-							(click)="selectAssigned(person)"
-							[class.active]="activeItem === person"
-						>
-							{{ person }}
-						</li>
-					</ul>
+					<div class="selected-initials" *ngIf="assignedContacts.length > 0">
+						<ng-container *ngFor="let entry of contactService.contactsObject | keyvalue">
+							<ng-container *ngFor="let contact of entry.value">
+								<ng-container *ngIf="contact.id && assignedContacts.includes(contact.id)">
+									<div
+										class="initial-circle"
+										[style.background-color]="contactService.getAvatarColor(contact)"
+										[title]="contact.name"
+									>
+										{{ contact.initials }}
+									</div>
+								</ng-container>
+							</ng-container>
+						</ng-container>
+					</div>
 
+					<ul class="dropdown-list" *ngIf="assignedDropdownOpen">
+						<ng-container *ngFor="let entry of contactService.contactsObject | keyvalue">
+							<ng-container *ngFor="let contact of entry.value">
+								<li class="dropdown-contact">
+									<label>
+										<input
+											type="checkbox"
+											[checked]="contact.id ? isAssigned(contact.id) : false"
+											(change)="contact.id && toggleAssignment(contact.id)"
+										/>
+										<div
+											class="avatar"
+											[style.background-color]="contactService.getAvatarColor(contact)"
+										>
+											{{ contact.initials }}
+										</div>
+										<span class="contact-name">{{ contact.name }}</span>
+									</label>
+								</li>
+							</ng-container>
+						</ng-container>
+					</ul>
 				</div>
 			</div>
 
@@ -230,7 +260,7 @@
 									<button type="button" (click)="confirmEdit(i)" aria-label="Save subtask">
 										<img src="images/assets/check.svg" alt="" />
 									</button>
-                  |
+									|
 									<button type="button" (click)="removeSubtask(i)" aria-label="Delete subtask">
 										<img src="images/assets/delete_icon_white.svg" alt="" />
 									</button>

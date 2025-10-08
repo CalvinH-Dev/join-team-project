@@ -55,7 +55,7 @@ export class BoardView {
 	feedbackTasks = signal<Task[]>([]);
 	doneTasks = signal<Task[]>([]);
 
-	allTasks: Task[] = [];
+	allTasks: any = [];
 
 	private filteredTasks = signal<Task[]>([]);
 
@@ -67,6 +67,7 @@ export class BoardView {
 			this.inProgressTasks.set(tasks["in-progress"] || []);
 			this.feedbackTasks.set(tasks["awaiting-feedback"] || []);
 			this.doneTasks.set(tasks["done"] || []);
+      this.allTasks = tasks;
       //this.filteredTasks.set(tasks);
 		});
 
@@ -187,7 +188,7 @@ export class BoardView {
 	 */
 	onSearch(term: string) {
 		console.log("[BoardView] search triggered with:", term);
-		const allTasksFlat = this.taskService.allTasks;
+		const allTasksFlat = this.allTasks;
 
 		if (!term) {
 			this.filterTasks(allTasksFlat);

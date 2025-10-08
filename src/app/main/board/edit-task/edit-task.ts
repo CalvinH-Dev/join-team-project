@@ -41,6 +41,7 @@ export class EditTask {
 
 	toggleAssignedDropdown(event: MouseEvent): void {
 		event.stopPropagation();
+    this.categoryDropdownOpen = false;
 		this.assignedDropdownOpen = !this.assignedDropdownOpen;
 	}
 
@@ -200,6 +201,7 @@ export class EditTask {
 	}
 
 	onCategoryClick() {
+    this.assignedDropdownOpen = false;
 		this.categoryDropdownOpen = !this.categoryDropdownOpen;
 	}
 

@@ -1,7 +1,7 @@
 <div class="main">
 	<header class="task-header">
 		<div class="task-type">
-			<span class="type">{{ task?.category }}</span>
+			<app-task-label [category]="task?.category || ''"></app-task-label>
 		</div>
 		<div class="close" (click)="closeOverlay()">
 			<img src="/images/assets/close_cross.svg" alt="" />
@@ -20,7 +20,7 @@
 					<h3>Due date:</h3>
 				</div>
 				<div class="date">
-					<time [attr.datetime]="task?.dueDate?.toISOString()">
+					<time [attr.datetime]="task?.dueDate">
 						{{ task?.dueDate | date: "dd/MM/yyyy" }}
 					</time>
 				</div>
@@ -35,7 +35,7 @@
 					</div>
 					<div class="priority-img">
 						@if (task?.priority === "urgent") {
-							<img src="/images/board_section/prio_alta.svg" alt="Urgent" />
+							<img src="/images/add_task_section/prio_alta_red.svg" alt="Urgent" />
 						} @else if (task?.priority === "medium") {
 							<img src="/images/add_task_section/priority_symbols.svg" alt="Medium" />
 						} @else if (task?.priority === "low") {
@@ -87,7 +87,11 @@
 			<app-button variant="edit" icon="images/contacs_section/edit.svg" (click)="onEditClick()">
 				Edit
 			</app-button>
-			<app-button variant="delete" icon="images/contacs_section/trash_icon.svg">
+			<app-button
+				variant="delete"
+				icon="images/contacs_section/trash_icon.svg"
+				(click)="onDeleteClick()"
+			>
 				Delete
 			</app-button>
 		</footer>

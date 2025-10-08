@@ -1,15 +1,16 @@
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, OnInit, Output, inject, input } from "@angular/core";
-import { Firestore, doc, getDoc } from "@angular/fire/firestore";
+import { Firestore } from "@angular/fire/firestore";
 import { Contact } from "@core/interfaces/contact";
 import { Task } from "@core/interfaces/task";
 import { ContactService } from "@core/services/contact-service";
 import { TaskService } from "@core/services/task-service";
 import { Button } from "@shared/components/button/button";
+import { TaskLabel } from "@shared/components/task-label/task-label";
 
 @Component({
 	selector: "app-task-view",
-	imports: [Button, CommonModule,],
+	imports: [Button, CommonModule, TaskLabel],
 	templateUrl: "./task-view.html",
 	styleUrl: "./task-view.scss",
 })
@@ -21,7 +22,7 @@ export class TaskView implements OnInit {
 	taskId = input<string>("");
 
 	contactService = inject(ContactService);
-  taskService = inject(TaskService);
+	taskService = inject(TaskService);
 	assignedContacts: Contact[] = [];
 
 	ngOnInit() {
@@ -35,27 +36,20 @@ export class TaskView implements OnInit {
 		});
 	}
 
-	async loadTask(id: string) {
-		const taskRef = doc(this.firestore, `tasks/${id}`);
-		const snapshot = await getDoc(taskRef);
+	loadTask(id: string) {
+		this.taskService.allTasks$.subscribe((tasks) => {
+			this.task = tasks.find((task) => task.id === id) || null;
+		});
+	}
 
-		if (snapshot.exists()) {
-			const raw = snapshot.data() as any;
+	async onDeleteClick() {
+		if (!this.task?.id) return;
 
-			this.task = {
-				...raw,
-				dueDate: raw.dueDate?.toDate?.() ?? null,
-				createdAt: raw.createdAt?.toDate?.() ?? null,
-				updatedAt: raw.updatedAt?.toDate?.() ?? null,
-				subtasks:
-					raw.subtasks?.map((s: any) => ({
-						...s,
-						createdAt: s.createdAt?.toDate?.() ?? null,
-					})) ?? [],
-			};
-		} else {
-			console.warn(`Task with ID ${id} not found.`);
-			this.task = null;
+		try {
+			await this.taskService.deleteTask(this.task.id);
+			this.closeOverlay(); // Overlay schließen nach erfolgreichem Löschen
+		} catch (error) {
+			console.error("Fehler beim Löschen der Task:", error);
 		}
 	}
 

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Contact } from "@core/interfaces/contact";
 import { ContactService } from "@core/services/contact-service";
@@ -9,6 +9,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
 import { TaskService } from "@core/services/task-service";
 import { Task } from "@core/interfaces/task";
+import { Toast } from "@shared/components/toast/toast";
+import { Router } from "@angular/router";
 
 @Component({
 	selector: "app-add-task-form",
@@ -19,6 +21,7 @@ import { Task } from "@core/interfaces/task";
 		MatFormFieldModule,
 		MatInputModule,
 		MatNativeDateModule,
+		Toast,
 	],
 	templateUrl: "./add-task-form.html",
 	styleUrl: "./add-task-form.scss",
@@ -42,6 +45,7 @@ export class AddTaskForm {
 
 	contactService = inject(ContactService);
 	taskService = inject(TaskService);
+	router = inject(Router);
 
 	titleFocus = false;
 	dueDateFocus = false;
@@ -102,11 +106,11 @@ export class AddTaskForm {
 	}
 
 	get showActionError(): boolean {
-		return (
-			(this.titleTouched && !this.title) ||
-			(this.dueDateTouched && !this.dueDate) ||
-			(this.categoryTouched && !this.category)
-		);
+		let emptyFields = 0;
+		if ((this.titleTouched || this.formSubmitAttempted) && !this.title) emptyFields++;
+		if ((this.dueDateTouched || this.formSubmitAttempted) && !this.dueDate) emptyFields++;
+		if ((this.categoryTouched || this.formSubmitAttempted) && !this.category) emptyFields++;
+		return emptyFields > 1;
 	}
 
 	onBlur(field: string) {
@@ -115,7 +119,6 @@ export class AddTaskForm {
 		if (field === "category") this.categoryTouched = true;
 	}
 
-	// get live contacts from Firestore
 	ngOnInit() {
 		this.loadContacts();
 	}
@@ -134,8 +137,9 @@ export class AddTaskForm {
 		this.description = "";
 		this.dueDate = "";
 		this.category = "";
-		this.subtask = "";
+		this.subtasks = [];
 		this.assignedTo = [];
+		this.selectedPriority = "medium";
 
 		this.titleFocus = false;
 		this.dueDateFocus = false;
@@ -143,24 +147,25 @@ export class AddTaskForm {
 		this.descriptionFocus = false;
 		this.assignedFocus = false;
 		this.subtaskFocus = false;
+
+		this.titleTouched = false;
+		this.dueDateTouched = false;
 		this.categoryTouched = false;
+
 		this.assignedDropdownOpen = false;
 		this.categoryDropdownOpen = false;
 		this.activeItem = null;
 		this.activeCategory = null;
 	}
-
 	formSubmitAttempted = false;
 
 	async createTask() {
-		console.log("CreateTask() called");
+		this.formSubmitAttempted = true;
 
 		if (!this.title || !this.category || !this.dueDate) {
-			console.warn("Please fill all required fields");
+			this.showToast("Please fill all required fields", "error");
 			return;
 		}
-
-		console.log("Validation passed, preparing task...");
 
 		const newTask: Task = {
 			title: this.title,
@@ -169,27 +174,26 @@ export class AddTaskForm {
 			priority: this.selectedPriority as "low" | "medium" | "urgent",
 			status: "todo",
 			assignedContacts: this.assignedTo.map((c) => c.id ?? "").filter(Boolean),
-			subtasks: this.subtask
-				? [
-						{
-							id: Date.now().toString(),
-							title: this.subtask,
-							completed: false,
-							createdAt: new Date().toISOString(),
-						},
-					]
-				: [],
+			subtasks: this.subtasks.map((s) => ({
+				id: s.id,
+				title: s.title,
+				completed: s.completed,
+				createdAt: s.createdAt ? new Date(s.createdAt).toISOString() : new Date().toISOString(),
+			})),
 			dueDate: this.dueDate ? new Date(this.dueDate).toISOString() : undefined,
 
 			color: Math.floor(Math.random() * 10) + 1,
 		};
 
-		console.log("New task prepared:", newTask);
-
 		try {
 			const taskId = await this.taskService.addTask(newTask);
-			console.log("Task successfully added with ID:", taskId);
+			this.showToast("Task added to board", "success");
 			this.clearForm();
+			this.formSubmitAttempted = false;
+
+			setTimeout(() => {
+				this.router.navigate(["/board"]);
+			}, 1000);
 		} catch (error) {
 			console.error("Failed to add task:", error);
 		}
@@ -210,24 +214,35 @@ export class AddTaskForm {
 			isEditing: false,
 		});
 
-		this.subtask = ""; // clear input after adding
+		this.subtask = "";
 	}
 
-	// Delete a subtask by id
 	deleteSubtask(id: string) {
 		if (!this.subtasks) return;
 		this.subtasks = this.subtasks.filter((s) => s.id !== id);
 	}
 
-	// Edit a subtask (enable editing)
 	editSubtask(subtask: any) {
 		subtask.isEditing = true;
 	}
 
-	// Save edited subtask
 	saveSubtask(subtask: any) {
 		if (!subtask.title?.trim()) return;
 		subtask.title = subtask.title.trim();
 		subtask.isEditing = false;
+	}
+
+	toastVisible = signal(false);
+	toastMessage = signal("");
+	toastType: "success" | "error" = "success";
+
+	showToast(message: string, type: "success" | "error" = "success") {
+		this.toastMessage.set(message);
+		this.toastType = type;
+		this.toastVisible.set(true);
+
+		setTimeout(() => {
+			this.toastVisible.set(false);
+		}, 3000);
 	}
 }

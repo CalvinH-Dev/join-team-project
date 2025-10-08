@@ -140,11 +140,42 @@
 
             <div class="form-row">
                 <label class="label">Subtasks</label>
-                <input class="input text-input" type="text" placeholder="Add new subtask" [(ngModel)]="subtask"
-                    name="subtask" (focus)="subtaskFocus = true" (blur)="subtaskFocus = false"
-                    [ngClass]="{'focus': subtaskFocus}" />
-            </div>
 
+                <div class="input-with-icons">
+                    <input class="input text-input" type="text" placeholder="Add new subtask" [(ngModel)]="subtask"
+                        name="subtask" (focus)="subtaskFocus = true" (blur)="subtaskFocus = false"
+                        [ngClass]="{'focus': subtaskFocus}" />
+
+                    <button class="icon-btn" type="button" (click)="addSubtask()">
+                        <img src="images/assets/vector_17.svg" alt="Add Subtask" />
+                    </button>
+
+                    <button class="icon-btn" type="button" (click)="subtask=''">
+                        <img src="images/assets/cancel_icon.svg" alt="Clear" />
+                    </button>
+                </div>
+
+                <ul class="subtasks-list">
+                    <li *ngFor="let s of subtasks">
+                        <span class="dot">•</span>
+
+                        <input *ngIf="s.isEditing" [(ngModel)]="s.title" class="subtask-edit-input" />
+                        <span *ngIf="!s.isEditing">{{ s.title }}</span>
+
+                        <button class="icon-btn" *ngIf="!s.isEditing" (click)="editSubtask(s)">
+                            <img src="images/assets/edit_icon.svg" alt="Edit" />
+                        </button>
+
+                        <button class="icon-btn" *ngIf="s.isEditing" (click)="saveSubtask(s)">
+                            <img src="images/assets/check.svg" alt="Save" />
+                        </button>
+
+                        <button class="icon-btn" (click)="deleteSubtask(s.id)">
+                            <img src="images/assets/cancel_icon.svg" alt="Delete" />
+                        </button>
+                    </li>
+                </ul>
+            </div>
             <div class="bottom-spacer" aria-hidden="true"></div>
         </div>
 

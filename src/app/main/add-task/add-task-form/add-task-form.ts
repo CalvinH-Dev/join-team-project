@@ -29,6 +29,13 @@ export class AddTaskForm {
 	dueDate = "";
 	category = "";
 	subtask = "";
+	subtasks: {
+		id: string;
+		title: string;
+		completed: boolean;
+		createdAt?: Date;
+		isEditing?: boolean;
+	}[] = [];
 
 	contacts: Contact[] = [];
 	assignedTo: Contact[] = [];
@@ -168,11 +175,12 @@ export class AddTaskForm {
 							id: Date.now().toString(),
 							title: this.subtask,
 							completed: false,
-							createdAt: new Date(),
+							createdAt: new Date().toISOString(),
 						},
 					]
 				: [],
-			dueDate: new Date(this.dueDate),
+			dueDate: this.dueDate ? new Date(this.dueDate).toISOString() : undefined,
+
 			color: Math.floor(Math.random() * 10) + 1,
 		};
 
@@ -189,5 +197,37 @@ export class AddTaskForm {
 
 	get allRequiredFieldsFilled(): boolean {
 		return !!this.title && !!this.dueDate && !!this.category;
+	}
+
+	addSubtask() {
+		if (!this.subtask.trim()) return;
+
+		this.subtasks.push({
+			id: Date.now().toString(),
+			title: this.subtask,
+			completed: false,
+			createdAt: new Date(),
+			isEditing: false,
+		});
+
+		this.subtask = ""; // clear input after adding
+	}
+
+	// Delete a subtask by id
+	deleteSubtask(id: string) {
+		if (!this.subtasks) return;
+		this.subtasks = this.subtasks.filter((s) => s.id !== id);
+	}
+
+	// Edit a subtask (enable editing)
+	editSubtask(subtask: any) {
+		subtask.isEditing = true;
+	}
+
+	// Save edited subtask
+	saveSubtask(subtask: any) {
+		if (!subtask.title?.trim()) return;
+		subtask.title = subtask.title.trim();
+		subtask.isEditing = false;
 	}
 }

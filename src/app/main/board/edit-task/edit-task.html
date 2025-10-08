@@ -56,12 +56,10 @@
 						(blur)="dueDateFocus = false"
 						[ngClass]="{ focus: dueDateFocus, error: dueDateInput.invalid && dueDateInput.touched }"
 						required
-            matInput [matDatepicker]="picker"
 					/>
-                <button class="icon-btn date-icon" type="button" (click)="picker.open()" aria-hidden="true">
-                    <img src="images/add_task_section/events_icon.svg" alt="">
-                </button>
-                <mat-datepicker #picker></mat-datepicker>
+					<button class="icon-btn date-icon" type="button" aria-hidden="true">
+						<img src="images/add_task_section/events_icon.svg" alt="" />
+					</button>
 				</div>
 
 				<div class="field-error" *ngIf="dueDateInput.invalid && dueDateInput.touched">

@@ -102,6 +102,7 @@ export class EditTask {
 	// Dropdown states
 	assignedDropdownOpen = false;
 	activeItem: string | null = null;
+  today = new Date();
 
 	categoryDropdownOpen = false;
 	activeCategory: string | null = null;

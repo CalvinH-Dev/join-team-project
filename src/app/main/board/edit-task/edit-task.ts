@@ -25,6 +25,8 @@ export class EditTask {
 		private renderer: Renderer2,
 	) {}
 
+  @Input() taskId!: string;
+
 	ngAfterViewInit(): void {
 		this.renderer.listen("document", "click", (event: MouseEvent) => {
 			const target = event.target as HTMLElement;

@@ -7,6 +7,8 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatNativeDateModule } from "@angular/material/core";
+import { TaskService } from "@core/services/task-service";
+import { Task } from "@core/interfaces/task";
 
 @Component({
 	selector: "app-add-task-form",
@@ -32,6 +34,7 @@ export class AddTaskForm {
 	assignedTo: Contact[] = [];
 
 	contactService = inject(ContactService);
+	taskService = inject(TaskService);
 
 	titleFocus = false;
 	dueDateFocus = false;
@@ -50,8 +53,8 @@ export class AddTaskForm {
 	activeItem: string | null = null;
 	activeCategory: string | null = null;
 
-	selectedPriority = "medium";
-	setPriority(priority: string) {
+	selectedPriority: "medium" | "low" | "urgent" = "medium";
+	setPriority(priority: "medium" | "low" | "urgent") {
 		this.selectedPriority = priority;
 	}
 
@@ -125,7 +128,6 @@ export class AddTaskForm {
 		this.dueDate = "";
 		this.category = "";
 		this.subtask = "";
-		this.selectedPriority = "";
 		this.assignedTo = [];
 
 		this.titleFocus = false;
@@ -139,5 +141,53 @@ export class AddTaskForm {
 		this.categoryDropdownOpen = false;
 		this.activeItem = null;
 		this.activeCategory = null;
+	}
+
+	formSubmitAttempted = false;
+
+	async createTask() {
+		console.log("CreateTask() called");
+
+		if (!this.title || !this.category || !this.dueDate) {
+			console.warn("Please fill all required fields");
+			return;
+		}
+
+		console.log("Validation passed, preparing task...");
+
+		const newTask: Task = {
+			title: this.title,
+			description: this.description,
+			category: this.category as "User Story" | "Technical Task",
+			priority: this.selectedPriority as "low" | "medium" | "urgent",
+			status: "todo",
+			assignedContacts: this.assignedTo.map((c) => c.id ?? "").filter(Boolean),
+			subtasks: this.subtask
+				? [
+						{
+							id: Date.now().toString(),
+							title: this.subtask,
+							completed: false,
+							createdAt: new Date(),
+						},
+					]
+				: [],
+			dueDate: new Date(this.dueDate),
+			color: Math.floor(Math.random() * 10) + 1,
+		};
+
+		console.log("New task prepared:", newTask);
+
+		try {
+			const taskId = await this.taskService.addTask(newTask);
+			console.log("Task successfully added with ID:", taskId);
+			this.clearForm();
+		} catch (error) {
+			console.error("Failed to add task:", error);
+		}
+	}
+
+	get allRequiredFieldsFilled(): boolean {
+		return !!this.title && !!this.dueDate && !!this.category;
 	}
 }

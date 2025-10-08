@@ -1,18 +1,19 @@
 import { inject, Injectable, Injector, OnDestroy, runInInjectionContext } from "@angular/core";
 import { DocumentData } from "@angular/fire/compat/firestore";
 import {
+	addDoc,
 	collection,
 	collectionData,
 	deleteDoc,
 	doc,
 	Firestore,
 	getDocs,
+	onSnapshot,
+	QuerySnapshot,
 	setDoc,
 	updateDoc,
 } from "@angular/fire/firestore";
 import { Task } from "@core/interfaces/task";
-import { Observable } from "rxjs";
-import { map, shareReplay } from "rxjs/operators";
 
 type TaskDictionary = Record<string, Task[]>;
 
@@ -49,55 +50,25 @@ export class TaskService implements OnDestroy {
 	// Tasks-spezifische Firestore (falls verfügbar)
 	private tasksFirestore = this.getTasksFirestore();
 
-	/** Observable stream of all tasks from Firestore with shared subscription */
-	allTasks$!: Observable<Task[]>;
+	/** Currently selected task for detailed view */
+	taskForView: Task | undefined;
 
-	/** Observable stream of tasks organized by status, derived from allTasks$ */
-	tasksObject$!: Observable<TaskDictionary>;
+	/** Dictionary of tasks organized by status */
+	tasksObject: TaskDictionary = {};
 
-	/**
-	 * @deprecated Use tasksObject$ Observable instead
-	 * Getter for backward compatibility - returns current snapshot
-	 */
-	get tasksObject(): TaskDictionary {
-		let result: TaskDictionary = {};
-		this.tasksObject$
-			.pipe()
-			.subscribe((val) => (result = val))
-			.unsubscribe();
-		return result;
-	}
+	/** All tasks as flat array */
+	allTasks: Task[] = [];
 
-	/**
-	 * @deprecated Use allTasks$ Observable instead
-	 * Getter for backward compatibility - returns current snapshot
-	 */
-	get allTasks(): Task[] {
-		let result: Task[] = [];
-		this.allTasks$
-			.pipe()
-			.subscribe((val) => (result = val))
-			.unsubscribe();
-		return result;
-	}
+	/** Cleanup function for tasks collection subscription */
+	unsubscribeTasksObject: (() => void) | null = null;
+
+	/** Cleanup function for single task subscription */
+	unsubscribeTaskForView: (() => void) | null = null;
 
 	constructor() {
-		// Initialize Observables
-		runInInjectionContext(this.injector, () => {
-			const tasksCol = collection(this.tasksFirestore, "tasks");
-
-			// Create shared Observable stream for all tasks
-			this.allTasks$ = collectionData(tasksCol, { idField: "id" }).pipe(
-				map((rawTasks: any[]) => {
-					// Transform raw Firestore data to Task objects
-					return rawTasks.map((rawTask) => this.buildDocument(rawTask.id, rawTask));
-				}),
-				shareReplay(1), // Share one Firestore subscription among all subscribers
-			);
-
-			// Derive tasksObject$ from allTasks$
-			this.tasksObject$ = this.allTasks$.pipe(map((tasks) => this.createStatusObject(tasks)));
-		});
+		console.log("[TaskService] Service initialized");
+		console.log("[TaskService] Firestore instance:", this.tasksFirestore);
+		this.getTasksAsObject();
 	}
 
 	/**
@@ -120,53 +91,120 @@ export class TaskService implements OnDestroy {
 	}
 
 	/**
-	 * @deprecated Use allTasks$ Observable instead to avoid creating duplicate Firestore listeners.
-	 * This method now returns the shared allTasks$ Observable.
+	 * Establishes real-time subscription to all tasks in Firestore.
+	 * Automatically organizes tasks by status and updates tasksObject.
 	 *
-	 * @returns Observable<Task[]> - Stream of all tasks
+	 * @returns Observable data stream from Firestore collection
 	 *
 	 * @example
 	 * ```typescript
-	 * // Old way (deprecated)
-	 * this.taskService.getTasksAsObject().subscribe(tasks => {
-	 *   console.log('All tasks:', tasks);
-	 * });
-	 *
-	 * // New way (recommended)
-	 * this.taskService.allTasks$.subscribe(tasks => {
-	 *   console.log('All tasks:', tasks);
-	 * });
+	 * // Called automatically in constructor
+	 * // Access organized tasks via this.tasksObject
 	 * ```
 	 */
-	getTasksAsObject(): Observable<Task[]> {
-		return this.allTasks$;
+	getTasksAsObject() {
+		console.log("[TaskService] Initializing real-time tasks subscription...");
+
+		let data;
+		runInInjectionContext(this.injector, () => {
+			const tasksCol = collection(this.tasksFirestore, "tasks");
+			console.log("[TaskService] Connected to Firestore collection:", tasksCol);
+
+			this.unsubscribeTasksObject = onSnapshot(
+				tasksCol,
+				(snapshot: QuerySnapshot<DocumentData>) => {
+					console.log("[TaskService] Received Firestore snapshot update");
+					console.log("[TaskService] Snapshot size:", snapshot.size);
+					console.log("[TaskService] Snapshot empty:", snapshot.empty);
+
+					this.tasksObject = {};
+					this.allTasks = [];
+
+					const tasks: Task[] = [];
+
+					snapshot.forEach((doc) => {
+						const task = this.buildDocument(doc.id, doc.data());
+						tasks.push(task);
+						this.allTasks.push(task);
+						console.log("[TaskService] Processed task:", {
+							id: doc.id,
+							title: task.title,
+							status: task.status,
+							subtasks: task.subtasks?.length || 0,
+						});
+					});
+
+					this.createStatusObject(tasks);
+
+					console.log("[TaskService] Tasks organized by status:", {
+						todo: this.tasksObject["todo"]?.length || 0,
+						inprogress: this.tasksObject["inprogress"]?.length || 0,
+						awaitingfeedback: this.tasksObject["awaitingfeedback"]?.length || 0,
+						done: this.tasksObject["done"]?.length || 0,
+						total: tasks.length,
+					});
+				},
+				(error) => {
+					console.error("[TaskService] Firestore snapshot error:", error);
+					console.error("[TaskService] Error details:", {
+						message: error.message,
+						code: error.code,
+					});
+				},
+			);
+			data = collectionData(tasksCol, { idField: "id" });
+		});
+		return data;
 	}
 
-	private createStatusObject(tasksArr: Task[]): TaskDictionary {
-		const tasksObject: TaskDictionary = {
+	/**
+	 * Subscribes to a specific task document by ID for real-time updates.
+	 * Updates taskForView property with the latest task data.
+	 *
+	 * @param taskId - Firestore document ID of the task
+	 *
+	 * @example
+	 * ```typescript
+	 * this.taskService.getDocumentById('task-id-123');
+	 * // Access task via this.taskService.taskForView
+	 * ```
+	 */
+	getDocumentById(taskId: string) {
+		runInInjectionContext(this.injector, () => {
+			const task = doc(this.tasksFirestore, "tasks", taskId);
+			this.unsubscribeTaskForView = onSnapshot(task, (snapshot) => {
+				this.taskForView = undefined;
+				if (snapshot.exists()) {
+					setTimeout(() => {
+						this.taskForView = this.buildDocument(snapshot.id, snapshot.data());
+					}, 0);
+				}
+			});
+		});
+	}
+
+	private createStatusObject(tasksArr: Task[]) {
+		this.tasksObject = {
 			todo: [],
 			"in-progress": [],
-			"awaiting-feedback": [],
 			done: [],
 		};
 
 		tasksArr.forEach((task) => {
 			const status = task.status || "todo";
-			if (!tasksObject[status]) {
-				tasksObject[status] = [];
+			if (!this.tasksObject[status]) {
+				this.tasksObject[status] = [];
 			}
-			tasksObject[status].push(task);
+			this.tasksObject[status].push(task);
 		});
 
 		// Sort by priority within each status
-		const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
-		Object.keys(tasksObject).forEach((status) => {
-			tasksObject[status].sort((a, b) => {
+		Object.keys(this.tasksObject).forEach((status) => {
+			this.tasksObject[status].sort((a, b) => {
+				const priorityOrder = { urgent: 4, high: 3, medium: 2, low: 1 };
 				return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
 			});
 		});
-
-		return tasksObject;
 	}
 
 	private buildDocument(id: string, data: DocumentData): Task {
@@ -179,15 +217,22 @@ export class TaskService implements OnDestroy {
 			status: data["status"] || "todo",
 			assignedContacts: data["assignedContacts"] || [],
 			subtasks: data["subtasks"] || [],
-			dueDate: data["dueDate"] || undefined,
-			createdAt: data["createdAt"] || undefined,
-			updatedAt: data["updatedAt"] || undefined,
+			// always gets a JavaScript Date object, no matter what Firestore stored.
+			dueDate: data["dueDate"]
+				? data["dueDate"] instanceof Date
+					? data["dueDate"]
+					: (data["dueDate"].toDate?.() ?? new Date(data["dueDate"]))
+				: undefined,
+
+			createdAt: data["createdAt"]?.toDate() || undefined,
+			updatedAt: data["updatedAt"]?.toDate() || undefined,
 			color: data["color"],
 		};
 	}
 
 	ngOnDestroy() {
-		// Cleanup if needed
+		this.unsubscribeTaskForView?.();
+		this.unsubscribeTasksObject?.();
 	}
 
 	/**
@@ -236,11 +281,20 @@ export class TaskService implements OnDestroy {
 	 * ```
 	 */
 	async addTask(task: Task): Promise<string> {
+		console.log("[TaskService] Adding new task:", {
+			title: task.title,
+			category: task.category,
+			priority: task.priority,
+			status: task.status || "todo",
+		});
+
 		return await runInInjectionContext(this.injector, async () => {
 			const tasksCol = collection(this.tasksFirestore, "tasks");
+			console.log("[TaskService] Using Firestore collection:", tasksCol);
 
 			try {
 				const taskId = await this.generateNextTaskId();
+				console.log("[TaskService] Generated task ID:", taskId);
 
 				const now = new Date().toISOString().split('T')[0];
 				const taskData = {
@@ -257,11 +311,21 @@ export class TaskService implements OnDestroy {
 					color: task.color || this.generateRandomColor(),
 				};
 
+				console.log("[TaskService] Task data being saved:", taskData);
+
 				await setDoc(doc(tasksCol, taskId), taskData);
+
+				console.log("[TaskService] Task successfully added with ID:", taskId);
 
 				return taskId;
 			} catch (error) {
 				console.error("[TaskService] Failed to add task:", error);
+				console.error("[TaskService] Error details:", {
+					message: error instanceof Error ? error.message : "Unknown error",
+					code:
+						error && typeof error === "object" && "code" in error ? (error as any).code : "UNKNOWN",
+					task: task,
+				});
 				throw error;
 			}
 		});
@@ -354,22 +418,22 @@ export class TaskService implements OnDestroy {
 	}
 
 	/**
-	 * Gets tasks filtered by status as Observable.
+	 * Gets tasks filtered by status.
 	 *
 	 * @param status - Task status to filter by
-	 * @returns Observable stream of tasks with specified status
+	 * @returns Array of tasks with specified status
 	 */
-	getTasksByStatus(status: Task["status"]): Observable<Task[]> {
-		return this.tasksObject$.pipe(map((tasksObj) => tasksObj[status] || []));
+	getTasksByStatus(status: Task["status"]): Task[] {
+		return this.tasksObject[status] || [];
 	}
 
 	/**
-	 * Gets tasks filtered by priority as Observable.
+	 * Gets tasks filtered by priority.
 	 *
 	 * @param priority - Task priority to filter by
-	 * @returns Observable stream of tasks with specified priority
+	 * @returns Array of tasks with specified priority
 	 */
-	getTasksByPriority(priority: Task["priority"]): Observable<Task[]> {
-		return this.allTasks$.pipe(map((tasks) => tasks.filter((task) => task.priority === priority)));
+	getTasksByPriority(priority: Task["priority"]): Task[] {
+		return this.allTasks.filter((task) => task.priority === priority);
 	}
 }

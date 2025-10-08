@@ -9,9 +9,9 @@
                     (blur)="titleFocus = false; titleTouched = true"
                     [ngClass]="{'focus': titleFocus, 'error': titleTouched && !title }" />
 
-                <div class="field-error" *ngIf="titleTouched && !title">
+                <!-- <div class="field-error" *ngIf="titleTouched && !title">
                     This field is required
-                </div>
+                </div> -->
             </div>
 
             <div class="form-row description-row">
@@ -26,15 +26,18 @@
 
             <div class="input-with-icon">
                 <input matInput [matDatepicker]="picker" class="input date-input" placeholder="dd/MM/yyyy"
-                    [(ngModel)]="dueDate" readonly />
+                    [(ngModel)]="dueDate" name="dueDate" (focus)="dueDateFocus = true"
+                    (blur)="dueDateFocus = false; dueDateTouched = true"
+                    [ngClass]="{'focus': dueDateFocus, 'error': (dueDateTouched || formSubmitAttempted) && !dueDate}" />
+
                 <button class="icon-btn date-icon" type="button" (click)="picker.open()" aria-hidden="true">
                     <img src="images/add_task_section/events_icon.svg" alt="">
                 </button>
                 <mat-datepicker #picker></mat-datepicker>
             </div>
-            <div class="field-error" *ngIf="dueDateTouched && !dueDate">
+            <!-- <div class="field-error" *ngIf="dueDateTouched && !dueDate">
                 This field is required
-            </div>
+            </div> -->
         </div>
 
         <div class="divider-wrapper">
@@ -113,7 +116,6 @@
             <div class="form-row">
                 <label class="label">Category <span class="required">*</span></label>
                 <div class="select-wrap" [class.focus]="categoryFocus">
-
                     <div class="select-input" (click)="onCategoryClick()" (blur)="categoryTouched = true" tabindex="0"
                         (focus)="categoryFocus = true" (blur)="categoryFocus = false; categoryTouched = true"
                         [ngClass]="{'focus': categoryFocus, 'error': categoryTouched && !category }">
@@ -130,10 +132,9 @@
                         </li>
                     </ul>
                 </div>
-
-                <div class="field-error" *ngIf="categoryTouched && !category">
+                <!-- <div class="field-error" *ngIf="categoryTouched && !category">
                     This field is required
-                </div>
+                </div> -->
             </div>
 
 
@@ -153,8 +154,10 @@
         <div class="field-error action-error" *ngIf="showActionError">
             <span>*</span>This field is required
         </div>
+
         <button class="btn-clear" type="button" (click)="clearForm()">Clear <img
                 src="images/assets/cancel_icon.svg"></button>
-        <button class="btn-create" type="button">Create Task <img src="images/assets/check.svg"></button>
+        <button class="btn-create" type="button" (click)="createTask()" [disabled]="!allRequiredFieldsFilled">Create
+            Task <img src="images/assets/check.svg"></button>
     </div>
 </div>

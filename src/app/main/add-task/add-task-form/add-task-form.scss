@@ -364,6 +364,12 @@
 	transform: scale(0.98);
 }
 
+.btn-create:disabled {
+	opacity: 0.5; /* makes it look faded */
+	cursor: not-allowed; /* shows the disabled cursor */
+	pointer-events: none; /* ensures it cannot be clicked */
+}
+
 .checkbox-item {
 	display: flex;
 	align-items: center;

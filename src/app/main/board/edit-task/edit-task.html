@@ -1,4 +1,4 @@
-<div class="main"  (click)="onOverlayClick($event)">
+<div class="main" (click)="onOverlayClick($event)">
 	<header class="task-header">
 		<div class="close" (click)="closeEditOverlay()">
 			<img src="/images/assets/close_cross.svg" alt="" />
@@ -56,10 +56,12 @@
 						(blur)="dueDateFocus = false"
 						[ngClass]="{ focus: dueDateFocus, error: dueDateInput.invalid && dueDateInput.touched }"
 						required
+            matInput [matDatepicker]="picker"
 					/>
-					<button class="icon-btn date-icon" type="button" aria-hidden="true">
-						<img src="images/add_task_section/events_icon.svg" alt="" />
-					</button>
+                <button class="icon-btn date-icon" type="button" (click)="picker.open()" aria-hidden="true">
+                    <img src="images/add_task_section/events_icon.svg" alt="">
+                </button>
+                <mat-datepicker #picker></mat-datepicker>
 				</div>
 
 				<div class="field-error" *ngIf="dueDateInput.invalid && dueDateInput.touched">

@@ -10,12 +10,19 @@ import {
 } from "@angular/core";
 import { Firestore, doc, updateDoc } from "@angular/fire/firestore";
 import { FormsModule } from "@angular/forms";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 import { Task } from "@app/core/interfaces/task";
 import { ContactService } from "@core/services/contact-service";
 
 @Component({
 	selector: "app-edit-task",
-	imports: [CommonModule, FormsModule],
+	imports: [CommonModule, FormsModule, MatDatepickerModule,
+		MatFormFieldModule,
+		MatInputModule,
+		MatNativeDateModule,],
 	templateUrl: "./edit-task.html",
 	styleUrl: "./edit-task.scss",
 })

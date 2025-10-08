@@ -1,1 +1,34 @@
-<p>summary works!</p>
+<div>
+	<h2>Tasks from Database</h2>
+
+	@for (item of items; track item.id) {
+		<p>{{ item.title }} - Priority: {{ item.priority }} - Status: {{ item.status }}</p>
+	}
+
+
+  <h2># for a clean implement</h2>
+	@for (item of urgentItems; track item.id) {
+    <p>{{ item.title }}</p>
+  }
+
+  <h3># #NotRecommended</h3>
+
+  @for (item of items; track item.id) {
+    @if (item.priority === 'urgent') {
+      <p>{{ item.title }}</p>
+    }
+  }
+
+  <h4># for a clean implement</h4>
+	@for (item of categoryItems; track item.id) {
+    <p>{{ item.title }} - {{ item.category }}</p>
+  }
+
+  <!-- <h1># for a clean implement</h1>
+  @for (item of categoryItems; track item.id; let i = $index) {
+    @if (i === 0) {
+      <p>{{ item.title }} - {{ item.category }}</p>
+    }
+  } -->
+
+</div>

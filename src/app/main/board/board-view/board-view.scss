@@ -40,10 +40,6 @@
 		}
 	}
 
-	.task-add-button-desktop {
-		display: none;
-	}
-
 	.task-add-button {
 		width: 30px;
 		height: 30px;
@@ -113,11 +109,6 @@
 		gap: 0.5rem;
 	}
 
-	.desktop-headline-btn {
-		display: flex;
-		justify-content: space-between;
-	}
-
 	.btn-overlay {
 		display: none;
 	}
@@ -155,7 +146,6 @@
 	}
 
 	.board-header {
-		// Desktop: Suchfeld und Button in einer Reihe zentrieren
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -165,8 +155,7 @@
 		height: 44px;
 
 		.board-title {
-			// Anpassung der Schriftgröße für Desktop
-			font-size: 61px;
+			font-size: clamp(2em, 5vw, 3.8125em);
 			font-weight: var(--fw-bold);
 		}
 
@@ -217,14 +206,12 @@
 	}
 
 	.column-status {
-		// Jede Spalte soll gleich breit sein und nicht schrumpfen
 		flex-grow: 1;
 		flex-basis: 100px;
 
 		.column-body {
-			// Auf Desktop: Feste Höhe für Scrollbarkeit innerhalb der Spalte
-			height: calc(100% - 40px); // Gesamthöhe abzüglich Titelhöhe
-			overflow-y: auto; // Scrollbar nur für die Task-Karten
+			height: calc(100% - 40px);
+			overflow-y: auto;
 			padding: 0.5rem;
 		}
 
@@ -240,16 +227,15 @@
 
 	.mobile-btn-cnt {
 		padding: 0;
-		width: 95%;
+		width: 93%;
 
 		.task-add-button {
 			width: 20px;
 			height: 20px;
-			cursor: pointer;
 
-			.svg-button-base {
-				cursor: pointer;
-			}
+      &:hover {
+        color: var(--bg-color-blue-lighter);
+      }
 		}
 	}
 

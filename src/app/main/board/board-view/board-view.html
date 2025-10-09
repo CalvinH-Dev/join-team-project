@@ -2,11 +2,14 @@
 	<header class="board-header">
 		<div class="mobile-btn-cnt">
 			<h1 class="board-title">Board</h1>
-			<app-svg-button class="board-add-button" (onClick)="openAddTaskOverlay()"> </app-svg-button>
+			<app-svg-button class="board-add-button"
+       (onClick)="openAddTaskOverlay()">
+      </app-svg-button>
 		</div>
 		<div class="header-controls">
-			<app-search-field (searchText)="onSearch($event)"></app-search-field>
-
+			<app-search-field
+      (searchText)="onSearch($event)">
+    </app-search-field>
 			<button class="desktop-btn" type="button" (click)="openAddTaskOverlay()">
 				Add task
 				<img src="images/board_section/add_icon.svg" />
@@ -26,9 +29,9 @@
 		>
 			<div class="mobile-btn-cnt">
 				<h2 class="column-title">To Do</h2>
-				<app-svg-button class="task-add-button" (onClick)="openAddTaskOverlay()"> </app-svg-button>
-				<app-svg-button class="task-add-button-desktop" (onClick)="openAddTaskOverlay()">
-				</app-svg-button>
+				<app-svg-button class="task-add-button"
+        (onClick)="openAddTaskOverlay()">
+           </app-svg-button>
 				<div class="btn-overlay"></div>
 			</div>
 			<div class="column-body">
@@ -57,9 +60,9 @@
 		>
 			<div class="mobile-btn-cnt">
 				<h2 class="column-title">In Progress</h2>
-				<app-svg-button class="task-add-button" (onClick)="openAddTaskOverlay()"> </app-svg-button>
-				<app-svg-button class="task-add-button-desktop" (onClick)="openAddTaskOverlay()">
-				</app-svg-button>
+				<app-svg-button class="task-add-button"
+        (onClick)="openAddTaskOverlay()">
+        </app-svg-button>
 				<div class="btn-overlay"></div>
 			</div>
 			<div class="column-body">
@@ -88,9 +91,9 @@
 		>
 			<div class="mobile-btn-cnt">
 				<h2 class="column-title">Awaiting Feedback</h2>
-				<app-svg-button class="task-add-button" (onClick)="openAddTaskOverlay()"> </app-svg-button>
-				<app-svg-button class="task-add-button-desktop" (onClick)="openAddTaskOverlay()">
-				</app-svg-button>
+				<app-svg-button class="task-add-button"
+         (onClick)="openAddTaskOverlay()">
+         </app-svg-button>
 				<div class="btn-overlay"></div>
 			</div>
 			<div class="column-body">
@@ -138,7 +141,9 @@
 	<!-- Zeigt die TaskView nur an, wenn selectedTaskId einen Wert hat -->
 	@if (selectedTaskId()) {
 		<div class="overlay-wrapper">
-			<div class="overlay-backdrop" (click)="closeTaskDetail()"></div>
+			<div class="overlay-backdrop"
+      (click)="closeTaskDetail()">
+    </div>
 
 			<app-task-view
 				[taskId]="selectedTaskId()!"

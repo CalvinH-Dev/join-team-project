@@ -1,16 +1,16 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, input, signal, HostListener, ElementRef } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Contact } from "@core/interfaces/contact";
-import { ContactService } from "@core/services/contact-service";
+import { MatNativeDateModule } from "@angular/material/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatNativeDateModule } from "@angular/material/core";
-import { TaskService } from "@core/services/task-service";
-import { Task } from "@core/interfaces/task";
-import { Toast } from "@shared/components/toast/toast";
 import { Router } from "@angular/router";
+import { Contact } from "@core/interfaces/contact";
+import { Task } from "@core/interfaces/task";
+import { ContactService } from "@core/services/contact-service";
+import { TaskService } from "@core/services/task-service";
+import { Toast } from "@shared/components/toast/toast";
 
 @Component({
 	selector: "app-add-task-form",
@@ -27,6 +27,7 @@ import { Router } from "@angular/router";
 	styleUrl: "./add-task-form.scss",
 })
 export class AddTaskForm {
+	categoryToAdd = input<"todo" | "in-progress" | "awaiting-feedback" | "done">("todo");
 	title = "";
 	description = "";
 	dueDate = "";
@@ -46,6 +47,7 @@ export class AddTaskForm {
 	contactService = inject(ContactService);
 	taskService = inject(TaskService);
 	router = inject(Router);
+	eRef = inject(ElementRef);
 	today = new Date();
 
 	titleFocus = false;
@@ -72,16 +74,12 @@ export class AddTaskForm {
 
 	onInputClick() {
 		this.assignedDropdownOpen = !this.assignedDropdownOpen;
-		if (this.assignedDropdownOpen) {
-			this.categoryDropdownOpen = false;
-		}
+		this.categoryDropdownOpen = false;
 	}
 
 	onCategoryClick() {
 		this.categoryDropdownOpen = !this.categoryDropdownOpen;
-		if (this.categoryDropdownOpen) {
-			this.assignedDropdownOpen = false;
-		}
+		this.assignedDropdownOpen = false;
 	}
 
 	selectCategory(cat: string) {
@@ -179,7 +177,7 @@ export class AddTaskForm {
 			description: this.description,
 			category: this.category as "User Story" | "Technical Task",
 			priority: this.selectedPriority as "low" | "medium" | "urgent",
-			status: "todo",
+			status: this.categoryToAdd(),
 			assignedContacts: this.assignedTo.map((c) => c.id ?? "").filter(Boolean),
 			subtasks: this.subtasks.map((s) => ({
 				id: s.id,
@@ -251,5 +249,30 @@ export class AddTaskForm {
 		setTimeout(() => {
 			this.toastVisible.set(false);
 		}, 3000);
+	}
+
+	@HostListener("document:click", ["$event"])
+	onDocumentClick(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		const assignedWrap = this.eRef.nativeElement.querySelector(
+			".assigned-wrap",
+		) as HTMLElement | null;
+		const categoryWrap = this.eRef.nativeElement.querySelector(
+			".category-wrap",
+		) as HTMLElement | null;
+
+		const clickedInsideAssigned = assignedWrap ? assignedWrap.contains(target) : false;
+		const clickedInsideCategory = categoryWrap ? categoryWrap.contains(target) : false;
+
+		const clickedInMatDatepicker = !!target.closest(
+			".mat-datepicker-content, .mat-datepicker-popup, .mat-datepicker-calendar",
+		);
+
+		if (!clickedInsideAssigned && !clickedInMatDatepicker) {
+			this.assignedDropdownOpen = false;
+		}
+		if (!clickedInsideCategory && !clickedInMatDatepicker) {
+			this.categoryDropdownOpen = false;
+		}
 	}
 }

@@ -13,9 +13,24 @@
 		top: 40px;
 		left: 20px;
 		transform: scale(0.365) translateX(-100%) translateY(-100%);
-		background-image: url(../assets/join_logo_dark.svg);
+		background-image: url(../../../../../public/images/join_logo/join_logo_dark.svg);
 		background-repeat: no-repeat;
 		background-size: contain;
 		animation: moveToTopLeft 1s ease-in-out;
 	}
+}
+
+.login-window {
+	width: calc(65.5rem - clamp(24.75rem, 67.4167rem + -47.4074vw, 40.75rem));
+	padding: calc(5rem - clamp(2rem, 4.6667rem + -2.963vw, 3rem)) 16px;
+	border-radius: 30px;
+	gap: 32px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	flex-direction: column;
+	transform: translateX(-50%) translateY(-50%);
+	background: var(--clr-white);
+	box-shadow: var(--shadow-backlog);
+	animation: fadeIn 1.5s ease-in-out;
 }

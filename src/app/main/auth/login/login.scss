@@ -1,0 +1,21 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+}
+
+.login-signup-header {
+	.join-logo {
+		height: calc(28.438rem - clamp(7.563rem, 43.0617rem + -39.443vw, 20.875rem));
+		width: calc(23.375rem - clamp(6.25rem, 35.25rem + -32.2222vw, 17.125rem));
+		position: relative;
+		top: 40px;
+		left: 20px;
+		transform: scale(0.365) translateX(-100%) translateY(-100%);
+		background-image: url(../assets/join_logo_dark.svg);
+		background-repeat: no-repeat;
+		background-size: contain;
+		animation: moveToTopLeft 1s ease-in-out;
+	}
+}

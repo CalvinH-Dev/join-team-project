@@ -6,7 +6,11 @@
 }
 
 body {
-  background-color: whitesmoke;
+	background-color: whitesmoke;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .login-overlay {
@@ -66,38 +70,93 @@ body {
 	width: 64px;
 }
 
+.login {
+	width: 100%;
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	margin-top: 32px;
+
+	.register {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 48px;
+		gap: 24px;
+
+    span {
+      font-size: 20px;
+      color: #2a3547;
+      font-weight: 500;
+    }
+
+		button {
+			border: none;
+			border-radius: 10px;
+			background-color: #2a3547;
+			width: 120px;
+			height: 30px;
+
+			a {
+				text-decoration: none;
+				font-weight: bold;
+				color: whitesmoke;
+				padding: 8px;
+			}
+		}
+	}
+
+	.legal-notes {
+		width: 100%;
+		display: flex;
+		justify-content: space-around;
+		margin-bottom: 12px;
+
+		a {
+			text-decoration: none;
+			color: #a8a8a8;
+			padding: 8px;
+      font-size: 16px;
+		}
+	}
+}
+
 .login-window {
 	height: 50vh;
 	width: 70vw;
 	border: none;
 	border-radius: 20px;
 	box-shadow: 1px 1px 20px 1px grey;
-	position: fixed;
-	top: 25%;
-	left: 15%;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	margin-bottom: 64px;
 
 	.headline {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-    margin-bottom: 20px;
+		margin-bottom: 20px;
 
-    h1 {
-      margin-bottom: 8px;
-      font-size: 47px;
-    }
+		h1 {
+			margin-bottom: 8px;
+			font-size: 40px;
+      font-weight: bold;
+		}
 
 		.seperator {
 			height: 4px;
 			width: 90px;
 			background-color: #29abe3;
-      border-radius: 8px;
+			border-radius: 8px;
 		}
 	}
 
@@ -157,3 +216,5 @@ body {
 		}
 	}
 }
+
+

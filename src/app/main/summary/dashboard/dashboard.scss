@@ -59,7 +59,7 @@
 		transform: scale(1);
 
 		&:hover {
-			transform: scale(1.05);
+			transform: scale(1.04);
 			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 			background-color: var(--bg-color-blue-darker);
 			color: var(--bg-color-white);
@@ -151,6 +151,14 @@
 	}
 }
 
-.bottom-row .stat-card.tiny {
-	flex: 1 1 0;
+.bottom-row {
+	display: flex;
+	gap: 15px;
+	flex-wrap: wrap;
+
+	.stat-card.tiny {
+		flex: 1 1 100%;
+		min-width: 0;
+		white-space: normal;
+	}
 }

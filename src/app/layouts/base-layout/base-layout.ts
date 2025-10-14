@@ -15,6 +15,6 @@ export class BaseLayout implements OnInit {
 	loggedIn = false;
 
 	ngOnInit() {
-		this.loggedIn = false;
+		this.loggedIn = true;
 	}
 }

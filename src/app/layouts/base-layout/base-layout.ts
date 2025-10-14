@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { ActivatedRoute, RouterOutlet } from "@angular/router";
+import { RouterOutlet } from "@angular/router";
 import { AuthService } from "@core/services/auth-service";
 import { Footer } from "@shared/footer/footer";
 import { Header } from "@shared/header/header";
@@ -11,7 +11,6 @@ import { Header } from "@shared/header/header";
 	styleUrl: "./base-layout.scss",
 })
 export class BaseLayout implements OnInit {
-	private route = inject(ActivatedRoute);
 	private authService = inject(AuthService);
 	loggedIn = false;
 

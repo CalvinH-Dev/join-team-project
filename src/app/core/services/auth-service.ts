@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { from, Observable } from "rxjs";
-import { switchMap, tap, map } from "rxjs/operators";
+import { take, tap, map } from "rxjs/operators";
 
 import {
 	Auth,
@@ -27,11 +27,10 @@ export class AuthService {
 
 	readonly firebaseUser$ = user(this.firebaseAuth);
 	currentUser = signal<AppUser | null>(null);
-	isLoggedIn = signal(false);
 
-	readonly isLoggedIn$: Observable<boolean> = this.firebaseUser$.pipe(
-		map((user) => !!user),
-	);
+	private _isLoggedInSignal = signal(false);
+
+	readonly isLoggedIn$: Observable<boolean> = this.firebaseUser$.pipe(map((user) => !!user));
 
 	constructor() {
 		this.firebaseUser$.subscribe((firebaseUser) => {
@@ -43,12 +42,32 @@ export class AuthService {
 					isGuest: firebaseUser.isAnonymous,
 				};
 				this.currentUser.set(appUser);
-				this.isLoggedIn.set(true);
+				this._isLoggedInSignal.set(true);
 			} else {
 				this.currentUser.set(null);
-				this.isLoggedIn.set(false);
+				this._isLoggedInSignal.set(false);
 			}
 		});
+	}
+
+	// --- PUBLIC API FOR AUTH STATUS ---
+
+	/**
+	 * Gibt ein Observable zurück, das den aktuellen Anmeldestatus in Echtzeit liefert.
+	 * Wird typischerweise von asynchrone Pipes in Templates verwendet.
+	 * @returns Observable<boolean> - true, wenn der Benutzer eingeloggt ist, sonst false.
+	 */
+	isLoggedIn(): Observable<boolean> {
+		return this.isLoggedIn$;
+	}
+
+	/**
+	 * Gibt den aktuellen Anmeldestatus einmalig zurück und schließt das Observable sofort.
+	 * DIESE Methode ist für Route Guards optimiert.
+	 * @returns Observable<boolean> - true, wenn der Benutzer eingeloggt ist, sonst false.
+	 */
+	isLoggedInOnce(): Observable<boolean> {
+		return this.isLoggedIn$.pipe(take(1));
 	}
 
 	// --- CORE METHODS ---
@@ -104,8 +123,6 @@ export class AuthService {
 				this.toastService.showInfo("Abmeldung", "Sie wurden erfolgreich abgemeldet.");
 				this.router.navigate(["/login"]);
 			}),
-			// Vereinfachte Rückgabe
-			map(() => undefined as void),
 		);
 	}
 }

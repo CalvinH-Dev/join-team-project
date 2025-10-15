@@ -12,7 +12,6 @@ import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { routes } from "@app/app.routes";
 import { initializeFirestore } from "@core/initializers/firestore.initializer";
 import { FirestoreInitService } from "@core/services/firestore-init.service";
-import { firebaseConfig } from "@environments/environment";
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -27,7 +26,16 @@ export const appConfig: ApplicationConfig = {
 			withViewTransitions(),
 		),
 		// Firebase Setup - einheitliche Konfiguration
-		provideFirebaseApp(() => initializeApp(firebaseConfig)),
+		provideFirebaseApp(() =>
+			initializeApp({
+				apiKey: import.meta.env.NG_APP_FIREBASE_API_KEY,
+				authDomain: import.meta.env.NG_APP_FIREBASE_AUTH_DOMAIN,
+				projectId: import.meta.env.NG_APP_FIREBASE_PROJECT_ID,
+				storageBucket: import.meta.env.NG_APP_FIREBASE_STORAGE_BUCKET,
+				messagingSenderId: import.meta.env.NG_APP_FIREBASE_MESSAGING_SENDER_ID,
+				appId: import.meta.env.NG_APP_FIREBASE_APP_ID,
+			}),
+		),
 		provideFirestore(() => getFirestore()),
 
 		// Firestore Schema Initialization

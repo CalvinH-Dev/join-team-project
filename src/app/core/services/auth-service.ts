@@ -1,128 +1,110 @@
-import { Injectable, inject, signal } from "@angular/core";
-import { Router } from "@angular/router";
-import { from, Observable } from "rxjs";
-import { take, tap, map } from "rxjs/operators";
+import { Injectable, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { from, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 
+// Firebase Imports
 import {
-	Auth,
-	user,
-	signInWithEmailAndPassword,
-	createUserWithEmailAndPassword,
-	signOut,
-	updateProfile,
-	signInAnonymously,
-} from "@angular/fire/auth";
+  Auth,
+  user,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  User as FirebaseUser,
+  updateProfile,
+  signInAnonymously // Hinzugefügt für den Gast-Login
+} from '@angular/fire/auth';
 
-import { ToastService } from "@shared/services/toast.service";
-import { AppUser } from "@core/interfaces/user";
+import { ToastService } from '@shared/services/toast.service';
+// ---------------------------
+
+// Angenommener Import für das Benutzer-Interface
+import { AppUser } from '@core/interfaces/user';
 
 @Injectable({
-	providedIn: "root",
+  providedIn: 'root'
 })
 export class AuthService {
-	// --- DEPENDENCIES ---
-	private firebaseAuth = inject(Auth);
-	private router = inject(Router);
-	private toastService = inject(ToastService);
+  // --- DEPENDENCIES ---
+  private firebaseAuth = inject(Auth);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
 
-	readonly firebaseUser$ = user(this.firebaseAuth);
-	currentUser = signal<AppUser | null>(null);
+  // --- AUTH STATE (Signals & Observables) ---
+  readonly firebaseUser$ = user(this.firebaseAuth);
+  currentUser = signal<AppUser | null>(null);
+  isLoggedIn = signal(false);
 
-	private _isLoggedInSignal = signal(false);
+  constructor() {
+    this.firebaseUser$.subscribe(firebaseUser => {
+      if (firebaseUser) {
+        const appUser: AppUser = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          isGuest: firebaseUser.isAnonymous,
+        };
+        this.currentUser.set(appUser);
+        this.isLoggedIn.set(true);
+      } else {
+        this.currentUser.set(null);
+        this.isLoggedIn.set(false);
+      }
+    });
+  }
 
-	readonly isLoggedIn$: Observable<boolean> = this.firebaseUser$.pipe(map((user) => !!user));
+  // --- CORE METHODS ---
 
-	constructor() {
-		this.firebaseUser$.subscribe((firebaseUser) => {
-			if (firebaseUser) {
-				const appUser: AppUser = {
-					uid: firebaseUser.uid,
-					email: firebaseUser.email,
-					displayName: firebaseUser.displayName,
-					isGuest: firebaseUser.isAnonymous,
-				};
-				this.currentUser.set(appUser);
-				this._isLoggedInSignal.set(true);
-			} else {
-				this.currentUser.set(null);
-				this._isLoggedInSignal.set(false);
-			}
-		});
-	}
+  signUp(email: string, password: string, displayName: string): Observable<void> {
+    const promise = createUserWithEmailAndPassword(this.firebaseAuth, email, password)
+      .then(userCredential => {
+        if (userCredential.user && displayName) {
+          return updateProfile(userCredential.user, { displayName: displayName });
+        }
+      });
 
-	// --- PUBLIC API FOR AUTH STATUS ---
+    return from(promise).pipe(
+      tap(() => {
+        this.toastService.showSuccess('Registrierung erfolgreich', 'Willkommen an Bord!');
+        this.router.navigate(['/main']);
+      }),
+      switchMap(() => new Observable<void>(observer => observer.complete()))
+    );
+  }
 
-	/**
-	 * Gibt ein Observable zurück, das den aktuellen Anmeldestatus in Echtzeit liefert.
-	 * Wird typischerweise von asynchrone Pipes in Templates verwendet.
-	 * @returns Observable<boolean> - true, wenn der Benutzer eingeloggt ist, sonst false.
-	 */
-	isLoggedIn(): Observable<boolean> {
-		return this.isLoggedIn$;
-	}
+  signIn(email: string, password: string): Observable<void> {
+    const promise = signInWithEmailAndPassword(this.firebaseAuth, email, password);
 
-	/**
-	 * Gibt den aktuellen Anmeldestatus einmalig zurück und schließt das Observable sofort.
-	 * DIESE Methode ist für Route Guards optimiert.
-	 * @returns Observable<boolean> - true, wenn der Benutzer eingeloggt ist, sonst false.
-	 */
-	isLoggedInOnce(): Observable<boolean> {
-		return this.isLoggedIn$.pipe(take(1));
-	}
+    return from(promise).pipe(
+      tap(() => {
+        this.toastService.showSuccess('Anmeldung erfolgreich', 'Sie sind jetzt eingeloggt.');
+        this.router.navigate(['/main']);
+      }),
+      switchMap(() => new Observable<void>(observer => observer.complete()))
+    );
+  }
 
-	// --- CORE METHODS ---
+  signInAsGuest(): Observable<void> {
+    const promise = signInAnonymously(this.firebaseAuth);
 
-	signUp(email: string, password: string, displayName: string): Observable<void> {
-		const promise = createUserWithEmailAndPassword(this.firebaseAuth, email, password).then(
-			(userCredential) => {
-				if (userCredential.user && displayName) {
-					return updateProfile(userCredential.user, { displayName: displayName });
-				}
-				return Promise.resolve();
-			},
-		);
+    return from(promise).pipe(
+      tap(() => {
+        this.toastService.showInfo('Gast-Login', 'Sie sind jetzt als Gast angemeldet.');
+        this.router.navigate(['/main']);
+      }),
+      switchMap(() => new Observable<void>(observer => observer.complete()))
+    );
+  }
 
-		return from(promise).pipe(
-			tap(() => {
-				this.toastService.showSuccess("Registrierung erfolgreich", "Willkommen an Bord!");
-				this.router.navigate(["/main"]);
-			}),
-			map(() => undefined as void),
-		);
-	}
+  signOut(): Observable<void> {
+    const promise = signOut(this.firebaseAuth);
 
-	signIn(email: string, password: string): Observable<void> {
-		const promise = signInWithEmailAndPassword(this.firebaseAuth, email, password);
-
-		return from(promise).pipe(
-			tap(() => {
-				this.toastService.showSuccess("Anmeldung erfolgreich", "Sie sind jetzt eingeloggt.");
-				this.router.navigate(["/main"]);
-			}),
-			map(() => undefined as void),
-		);
-	}
-
-	signInAsGuest(): Observable<void> {
-		const promise = signInAnonymously(this.firebaseAuth);
-
-		return from(promise).pipe(
-			tap(() => {
-				this.toastService.showInfo("Gast-Login", "Sie sind jetzt als Gast angemeldet.");
-				this.router.navigate(["/main"]);
-			}),
-			map(() => undefined as void),
-		);
-	}
-
-	signOut(): Observable<void> {
-		const promise = signOut(this.firebaseAuth);
-
-		return from(promise).pipe(
-			tap(() => {
-				this.toastService.showInfo("Abmeldung", "Sie wurden erfolgreich abgemeldet.");
-				this.router.navigate(["/login"]);
-			}),
-		);
-	}
+    return from(promise).pipe(
+      tap(() => {
+        this.toastService.showInfo('Abmeldung', 'Sie wurden erfolgreich abgemeldet.');
+        this.router.navigate(['/auth/login']);
+      }),
+      switchMap(() => new Observable<void>(observer => observer.complete()))
+    );
+  }
 }

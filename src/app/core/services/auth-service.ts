@@ -1,20 +1,20 @@
-import { inject, Injectable, signal } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { from, Observable } from "rxjs";
 import { take, tap, map } from "rxjs/operators";
 
 import {
-  Auth,
-  createUserWithEmailAndPassword,
-  signInAnonymously,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
-  user,
+	Auth,
+	user,
+	signInWithEmailAndPassword,
+	createUserWithEmailAndPassword,
+	signOut,
+	updateProfile,
+	signInAnonymously,
 } from "@angular/fire/auth";
 
-import { AppUser } from "@core/interfaces/user";
 import { ToastService } from "@shared/services/toast.service";
+import { AppUser } from "@core/interfaces/user";
 
 @Injectable({
 	providedIn: "root",

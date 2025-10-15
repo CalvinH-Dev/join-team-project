@@ -1,11 +1,8 @@
-// src/app/core/services/auth.service.ts
-
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 
-// Firebase Imports
 import {
   Auth,
   user,
@@ -14,7 +11,7 @@ import {
   signOut,
   User as FirebaseUser,
   updateProfile,
-  signInAnonymously // Hinzugefügt für den Gast-Login
+  signInAnonymously
 } from '@angular/fire/auth';
 
 // --- KORRIGIERTER IMPORT ---

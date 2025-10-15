@@ -18,75 +18,52 @@ export class Login {
 	errorMessage: string | null = null;
 	isLoading: boolean = false;
 
-	loginForm = new FormGroup({
-		email: new FormControl("", [Validators.required, Validators.email]),
-		password: new FormControl("", [Validators.required, Validators.minLength(6)]),
-	});
+  // 1. Formulargruppe definieren
+  signupForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+    confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
+    acceptedPolicy: new FormControl(false, [Validators.requiredTrue])
+  }, { validators: this.passwordMatchValidator }); // 2. Custom Validator hinzufügen
 
-	constructor() {
-		if (this.authService.isLoggedIn()) {
-			this.router.navigate(["/main"]);
-		}
-	}
+  // 3. Custom Validator für Passwortgleichheit
+  passwordMatchValidator(group: FormGroup) {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+    // Setzt den Fehler 'passwordMismatch' auf 'confirmPassword'-Feld, wenn sie nicht übereinstimmen
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
 
-	/**
-	 * Meldet den Benutzer mit E-Mail und Passwort an.
-	 */
-	onLogin(): void {
-		this.errorMessage = null;
+  /**
+   * Registriert den Benutzer mithilfe des AuthService.
+   */
+  onSignUp(): void {
+    this.errorMessage = null;
 
-		if (this.loginForm.invalid) {
-			this.toastService.showError(
-				"Fehler",
-				"Bitte geben Sie eine gültige E-Mail und ein Passwort (min. 6 Zeichen) ein.",
-			);
-			return;
-		}
+    if (this.signupForm.invalid) {
+      this.toastService.showError('Validierungsfehler', 'Bitte überprüfen Sie alle Eingabefelder und akzeptieren Sie die Datenschutzrichtlinie.');
+      return;
+    }
 
-		const { email, password } = this.loginForm.value;
+    const { email, password, name } = this.signupForm.value;
 
-		if (email && password) {
-			this.isLoading = true;
+    if (email && password && name) {
+      this.isLoading = true;
 
-			this.authService.signIn(email, password).subscribe({
-				error: (error) => {
-					this.isLoading = false;
-					const code = error.code;
-					if (
-						code === "auth/invalid-credential" ||
-						code === "auth/user-not-found" ||
-						code === "auth/wrong-password"
-					) {
-						this.errorMessage = "Ungültige Anmeldedaten. Bitte prüfen Sie E-Mail und Passwort.";
-					} else {
-						this.errorMessage =
-							"Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.";
-					}
-					this.toastService.showError("Login-Fehler", this.errorMessage);
-				},
-				complete: () => {
-					this.isLoading = false;
-				},
-			});
-		}
-	}
+      this.authService.signUp(email, password, name).subscribe({
+        error: (error) => {
+          this.isLoading = false;
+          // Fehlerbehandlung
+          this.errorMessage = 'Registrierung fehlgeschlagen.';
+          this.toastService.showError('Registrierungsfehler', this.errorMessage);
+        },
+        complete: () => {
+          this.isLoading = false;
+          // Bei Erfolg navigiert der AuthService zu '/main'
+        }
+      });
+    }
+  }
 
-	/**
-	 * Meldet den Benutzer anonym als Gast an.
-	 */
-	onGuestLogin(): void {
-		this.errorMessage = null;
-		this.isLoading = true;
-
-		this.authService.signInAsGuest().subscribe({
-			error: (error) => {
-				this.isLoading = false;
-				this.errorMessage = "Fehler beim Gast-Login.";
-				this.toastService.showError("Gast-Login-Fehler", "Der anonyme Login ist fehlgeschlagen.");
-			},
-			complete: () => {
-				this.isLoading = false;
-			},
-		});
-	}
 }

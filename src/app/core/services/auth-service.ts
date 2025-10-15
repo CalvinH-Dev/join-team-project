@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 
-// Firebase Imports
 import {
   Auth,
   user,
@@ -12,7 +11,7 @@ import {
   signOut,
   User as FirebaseUser,
   updateProfile,
-  signInAnonymously // Hinzugefügt für den Gast-Login
+  signInAnonymously
 } from '@angular/fire/auth';
 
 import { ToastService } from '@shared/services/toast.service';

@@ -22,8 +22,8 @@
 			"@main/*": ["app/main/*"],
 			"@styles/*": ["styles/*"],
 			"@app/*": ["app/*"],
-			"@environments/*": ["environment/*"],
-			"@data/*": ["../scripts/data/*"]
+			"@data/*": ["../scripts/data/*"],
+			"@environments/*": ["environment/*"]
 		}
 	},
 	"angularCompilerOptions": {

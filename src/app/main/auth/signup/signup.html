@@ -1,58 +1,140 @@
+<div class="login-overlay">
+	<div class="join-logo"></div>
+</div>
+
 <div class="login">
 	<div class="logo">
 		<img src="/images/join_logo/join_logo_dark.svg" alt="" />
 	</div>
 
 	<div class="content">
-		<div class="register-window">
-			<div class="header">
-				<a routerLink="/login">
-					<img src="/images/assets/arrow_left_line.svg" alt="" />
-				</a>
-				<h1>Sign up</h1>
-			</div>
-			<div class="seperator"></div>
-
-			<div class="inputs">
-				<div class="input-wrapper" [class.hide-icon]="name.length > 2">
-					<img src="/images/sign_up_section/person_icon.svg" class="input-icon" />
-					<input type="text" placeholder="Name" [(ngModel)]="name" />
-				</div>
-				<div class="input-wrapper" [class.hide-icon]="email.length > 4">
-					<img src="/images/login_section/mail_icon.svg" class="input-icon" />
-					<input type="text" placeholder="Email" [(ngModel)]="email" />
-				</div>
-
-				<div class="input-wrapper" [class.hide-icon]="password.length > 8">
-					<img src="/images/login_section/lock.svg" class="input-icon" />
-					<input type="password" placeholder="Password" [(ngModel)]="password" />
-				</div>
-				<div class="input-wrapper" [class.hide-icon]="confirmPassword.length > 8">
-					<img src="/images/login_section/lock.svg" class="input-icon" />
-					<input type="password" placeholder="Confirm Password" [(ngModel)]="confirmPassword" />
-				</div>
+		<div class="login-window">
+			<div class="headline">
+				<h1>Sign Up</h1>
+				<div class="seperator"></div>
 			</div>
 
-			<div class="signup">
-				<label class="checkbox-label">
-					<input type="checkbox" [(ngModel)]="acceptedPolicy" />
-					<span> I accept the <a routerLink="/privacy-policy">Privacy Policy</a>. </span>
-				</label>
+			<form [formGroup]="signupForm" (ngSubmit)="onSignUp()">
+				<div class="inputs">
+					<div
+						class="input-wrapper"
+						[class.hide-icon]="(signupForm.get('name')?.value || '').length > 2"
+					>
+						<img src="/images/login_section/person_icon.svg" class="input-icon" />
+						<input type="text" placeholder="Name" formControlName="name" />
+						<div
+							*ngIf="
+								signupForm.get('name')?.invalid &&
+								(signupForm.get('name')?.dirty || signupForm.get('name')?.touched)
+							"
+							class="error-message"
+						>
+							Name ist erforderlich (mind. 3 Zeichen).
+						</div>
+					</div>
 
-				<button
-					class="signup-button"
-					[disabled]="!isFormValid()"
-					[class.inactive-text]="!isFormValid()"
-					(click)="navigateToSummary()"
+					<div
+						class="input-wrapper"
+						[class.hide-icon]="(signupForm.get('email')?.value || '').length > 4"
+					>
+						<img src="/images/login_section/mail_icon.svg" class="input-icon" />
+						<input type="email" placeholder="Email" formControlName="email" />
+						<div
+							*ngIf="
+								signupForm.get('email')?.invalid &&
+								(signupForm.get('email')?.dirty || signupForm.get('email')?.touched)
+							"
+							class="error-message"
+						>
+							Geben Sie eine gültige E-Mail-Adresse ein.
+						</div>
+					</div>
+
+					<div
+						class="input-wrapper"
+						[class.hide-icon]="(signupForm.get('password')?.value || '').length > 8"
+					>
+						<img src="/images/login_section/lock.svg" class="input-icon" />
+						<input type="password" placeholder="Password" formControlName="password" />
+						<div
+							*ngIf="
+								signupForm.get('password')?.errors?.['minlength'] &&
+								(signupForm.get('password')?.dirty || signupForm.get('password')?.touched)
+							"
+							class="error-message"
+						>
+							Passwort muss mind. 8 Zeichen lang sein.
+						</div>
+					</div>
+
+					<div
+						class="input-wrapper"
+						[class.hide-icon]="(signupForm.get('confirmPassword')?.value || '').length > 8"
+					>
+						<img src="/images/login_section/lock.svg" class="input-icon" />
+						<input
+							type="password"
+							placeholder="Confirm Password"
+							formControlName="confirmPassword"
+						/>
+					</div>
+
+					<div
+						*ngIf="
+							signupForm.errors?.['passwordMismatch'] &&
+							(signupForm.get('confirmPassword')?.dirty ||
+								signupForm.get('confirmPassword')?.touched)
+						"
+						class="error-message"
+					>
+						Passwörter stimmen nicht überein.
+					</div>
+				</div>
+
+				<!-- Policy Checkbox -->
+				<div class="policy-wrapper">
+					<input type="checkbox" formControlName="acceptedPolicy" id="policy" />
+					<label for="policy">
+						Ich stimme der
+						<a routerLink="/privacy-policy" (click)="$event.stopPropagation()"
+							>Datenschutzrichtlinie</a
+						>
+						zu.
+					</label>
+				</div>
+
+				<div
+					*ngIf="
+						signupForm.get('acceptedPolicy')?.invalid && signupForm.get('acceptedPolicy')?.touched
+					"
+					class="error-message"
 				>
-					Sign up
-				</button>
-			</div>
+					Sie müssen die Datenschutzrichtlinie akzeptieren.
+				</div>
+
+				<div *ngIf="errorMessage" class="general-error-message">
+					{{ errorMessage }}
+				</div>
+
+				<div class="login-buttons">
+					<!-- Sign Up Button -->
+					<button type="submit" class="login-button" [disabled]="signupForm.invalid || isLoading">
+						{{ isLoading ? "Registriere..." : "Sign up" }}
+					</button>
+				</div>
+			</form>
+		</div>
+
+		<div class="register">
+			<span>Already a user?</span>
+			<button>
+				<a routerLink="/login">Log in</a>
+			</button>
 		</div>
 
 		<div class="legal-notes">
-			<a routerLink="summary">Privacy Policy</a>
-			<a routerLink="summary">Legal Notice</a>
+			<a routerLink="/privacy-policy">Privacy Policy</a>
+			<a routerLink="/legal-notice">Legal Notice</a>
 		</div>
 	</div>
 </div>

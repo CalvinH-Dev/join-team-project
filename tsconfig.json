@@ -22,6 +22,7 @@
 			"@main/*": ["app/main/*"],
 			"@styles/*": ["styles/*"],
 			"@app/*": ["app/*"],
+			"@config/*": ["config/*"],
 			"@data/*": ["../scripts/data/*"],
 			"@environments/*": ["environment/*"]
 		}

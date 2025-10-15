@@ -1,8 +1,8 @@
 import { inject, Injectable } from "@angular/core";
 import { collection, doc, Firestore, getDocs, limit, query, setDoc } from "@angular/fire/firestore";
+import { firebaseConfig } from "@config/firebase.config";
 import sampleContactsData from "@data/sample-contacts.json";
 import sampleTasksData from "@data/sample-tasks.json";
-import { firebaseConfig } from "@environments/environment";
 
 @Injectable({
 	providedIn: "root",

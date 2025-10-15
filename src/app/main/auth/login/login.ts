@@ -1,73 +1,92 @@
-// src/app/main/auth/signup/signup.ts
-
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // WICHTIGER NEUER IMPORT
-import { AuthService } from '@core/services/auth-service';
-import { ToastService } from '@shared/services/toast.service';
-import { RouterLink } from "@angular/router";
+import { Component, inject } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
+import { FormControl, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
+import { AuthService } from "@core/services/auth-service";
+import { ToastService } from "@shared/services/toast.service";
 
 @Component({
-  selector: "app-signup",
-  imports: [RouterLink, ReactiveFormsModule],
-  templateUrl: "./login.html",
-  styleUrl: "./login.scss",
+	selector: "app-login",
+	imports: [ReactiveFormsModule, RouterLink],
+	templateUrl: "./login.html",
+	styleUrls: ["./login.scss"],
 })
-export class Signup {
-  // Services injizieren
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private toastService = inject(ToastService);
+export class Login {
+	private authService = inject(AuthService);
+	private router = inject(Router);
+	private toastService = inject(ToastService);
 
-  errorMessage: string | null = null;
-  isLoading: boolean = false;
+	errorMessage: string | null = null;
+	isLoading: boolean = false;
 
-  // 1. Formulargruppe definieren
-  signupForm = new FormGroup({
-    name: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    email: new FormControl('', [Validators.required, Validators.email]),
-    password: new FormControl('', [Validators.required, Validators.minLength(8)]),
-    confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8)]),
-    acceptedPolicy: new FormControl(false, [Validators.requiredTrue])
-  }, { validators: this.passwordMatchValidator }); // 2. Custom Validator hinzufügen
+	loginForm = new FormGroup({
+		email: new FormControl("", [Validators.required, Validators.email]),
+		password: new FormControl("", [Validators.required, Validators.minLength(6)]),
+	});
 
-  // 3. Custom Validator für Passwortgleichheit
-  passwordMatchValidator(group: FormGroup) {
-    const password = group.get('password')?.value;
-    const confirmPassword = group.get('confirmPassword')?.value;
-    // Setzt den Fehler 'passwordMismatch' auf 'confirmPassword'-Feld, wenn sie nicht übereinstimmen
-    return password === confirmPassword ? null : { passwordMismatch: true };
-  }
+	constructor() {
+		if (this.authService.isLoggedIn()) {
+			this.router.navigate(["/main"]);
+		}
+	}
 
-  /**
-   * Registriert den Benutzer mithilfe des AuthService.
-   */
-  onSignUp(): void {
-    this.errorMessage = null;
+	/**
+	 * Meldet den Benutzer mit E-Mail und Passwort an.
+	 */
+	onLogin(): void {
+		this.errorMessage = null;
 
-    if (this.signupForm.invalid) {
-      this.toastService.showError('Validierungsfehler', 'Bitte überprüfen Sie alle Eingabefelder und akzeptieren Sie die Datenschutzrichtlinie.');
-      return;
-    }
+		if (this.loginForm.invalid) {
+			this.toastService.showError(
+				"Fehler",
+				"Bitte geben Sie eine gültige E-Mail und ein Passwort (min. 6 Zeichen) ein.",
+			);
+			return;
+		}
 
-    const { email, password, name } = this.signupForm.value;
+		const { email, password } = this.loginForm.value;
 
-    if (email && password && name) {
-      this.isLoading = true;
+		if (email && password) {
+			this.isLoading = true;
 
-      this.authService.signUp(email, password, name).subscribe({
-        error: (error) => {
-          this.isLoading = false;
-          // Fehlerbehandlung
-          this.errorMessage = 'Registrierung fehlgeschlagen.';
-          this.toastService.showError('Registrierungsfehler', this.errorMessage);
-        },
-        complete: () => {
-          this.isLoading = false;
-          // Bei Erfolg navigiert der AuthService zu '/main'
-        }
-      });
-    }
-  }
+			this.authService.signIn(email, password).subscribe({
+				error: (error) => {
+					this.isLoading = false;
+					const code = error.code;
+					if (
+						code === "auth/invalid-credential" ||
+						code === "auth/user-not-found" ||
+						code === "auth/wrong-password"
+					) {
+						this.errorMessage = "Ungültige Anmeldedaten. Bitte prüfen Sie E-Mail und Passwort.";
+					} else {
+						this.errorMessage =
+							"Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.";
+					}
+					this.toastService.showError("Login-Fehler", this.errorMessage);
+				},
+				complete: () => {
+					this.isLoading = false;
+				},
+			});
+		}
+	}
 
+	/**
+	 * Meldet den Benutzer anonym als Gast an.
+	 */
+	onGuestLogin(): void {
+		this.errorMessage = null;
+		this.isLoading = true;
+
+		this.authService.signInAsGuest().subscribe({
+			error: (error) => {
+				this.isLoading = false;
+				this.errorMessage = "Fehler beim Gast-Login.";
+				this.toastService.showError("Gast-Login-Fehler", "Der anonyme Login ist fehlgeschlagen.");
+			},
+			complete: () => {
+				this.isLoading = false;
+			},
+		});
+	}
 }

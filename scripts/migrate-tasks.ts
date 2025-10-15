@@ -3,25 +3,21 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import { getFirebaseConfig, FirebaseConfig } from './firebase.config';
 
 /**
  * Firebase Tasks Migration Script (TypeScript)
  *
  * Automatically populates Firestore with sample task data
- * Reads Firebase config from environment.ts
+ * Uses configuration from firebase.config.ts
  *
  * Usage: npm run migrate:tasks
  */
 
-interface FirebaseConfig {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-}
-
+/**
+ * Task Interface - matches the current application interface
+ * @see src/app/core/interfaces/task.ts
+ */
 interface Task {
   id?: string;
   title: string;
@@ -30,15 +26,15 @@ interface Task {
   priority: 'low' | 'medium' | 'urgent';
   status: 'todo' | 'in-progress' | 'awaiting-feedback' | 'done';
   assignedContacts?: string[];
-  dueDate?: string | Date;
+  dueDate?: string | undefined;
   subtasks?: {
     id: string;
     title: string;
     completed: boolean;
-    createdAt?: Date;
+    createdAt?: string | undefined;
   }[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string | undefined;
+  updatedAt?: string | undefined;
   color?: number;
 }
 
@@ -54,53 +50,6 @@ const colors = {
 
 function log(message: string, color: keyof typeof colors = 'reset'): void {
   console.log(`${colors[color]}${message}${colors.reset}`);
-}
-
-function readFirebaseConfig(): FirebaseConfig | null {
-  const envPath = path.join(__dirname, '..', 'src', 'environment', 'environment.ts');
-
-  if (!fs.existsSync(envPath)) {
-    log('[ERROR] Environment file not found', 'red');
-    return null;
-  }
-
-  const envContent = fs.readFileSync(envPath, 'utf8');
-
-  if (!envContent.includes('firebaseConfig') || !envContent.includes('projectId')) {
-    log('[ERROR] No valid Firebase config found', 'red');
-    return null;
-  }
-
-  try {
-    const configMatch = envContent.match(/firebaseConfig\s*=\s*\{([^}]+)\}/s);
-    if (!configMatch) return null;
-
-    const configString = '{' + configMatch[1] + '}';
-    const lines = configString.split('\n');
-    const config: Partial<FirebaseConfig> = {};
-
-    for (const line of lines) {
-      if (line.trim().startsWith('/*') || line.trim().startsWith('*') ||
-          line.trim().startsWith('//') || !line.includes(':')) {
-        continue;
-      }
-      const keyValueMatch = line.match(/["']?(\w+)["']?\s*:\s*["']([^"']+)["']/);
-      if (keyValueMatch) {
-        config[keyValueMatch[1] as keyof FirebaseConfig] = keyValueMatch[2];
-      }
-    }
-
-    if (!config.projectId || !config.apiKey || !config.authDomain) {
-      log('[ERROR] Incomplete Firebase config', 'red');
-      return null;
-    }
-
-    log(`[INFO] Found Firebase project: ${config.projectId}`, 'cyan');
-    return config as FirebaseConfig;
-  } catch (error) {
-    log(`[ERROR] Could not parse Firebase config: ${error}`, 'red');
-    return null;
-  }
 }
 
 function loadSampleTasks(): Task[] {
@@ -137,10 +86,11 @@ async function migrateTasks() {
 
     for (const task of sampleTasks) {
       const taskRef = doc(db, 'tasks', task.id);
+      const now = new Date().toISOString();
       await setDoc(taskRef, {
         ...task,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: now,
+        updatedAt: now
       });
       console.log(\`[SUCCESS] Migrated task: \${task.title}\`);
     }
@@ -161,10 +111,8 @@ async function main(): Promise<void> {
   log('Firebase Tasks Migration', 'bright');
   log('=======================', 'blue');
 
-  const config = readFirebaseConfig();
-  if (!config) {
-    process.exit(1);
-  }
+  const config = getFirebaseConfig();
+  log(`[INFO] Using Firebase project: ${config.projectId}`, 'cyan');
 
   log('Creating migration script...', 'cyan');
   const migrationScript = createMigrationScript(config);

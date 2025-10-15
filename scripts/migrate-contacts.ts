@@ -3,32 +3,28 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import { getFirebaseConfig, FirebaseConfig } from './firebase.config';
 
 /**
  * Firebase Contacts Migration Script (TypeScript)
  *
  * Automatically populates Firestore with sample contact data
- * Reads Firebase config from environment.ts
+ * Uses configuration from firebase.config.ts
  *
  * Usage: npm run migrate:contacts
  */
 
-interface FirebaseConfig {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string;
-}
-
+/**
+ * Contact Interface - matches the current application interface
+ * @see src/app/core/interfaces/contact.ts
+ */
 interface Contact {
-  id: string;
+  id?: string;
   name: string;
   email: string;
   telephone: string;
-  color: string;
-  initials: string;
+  color?: number;
+  initials?: string;
 }
 
 const colors = {
@@ -43,53 +39,6 @@ const colors = {
 
 function log(message: string, color: keyof typeof colors = 'reset'): void {
   console.log(`${colors[color]}${message}${colors.reset}`);
-}
-
-function readFirebaseConfig(): FirebaseConfig | null {
-  const envPath = path.join(__dirname, '..', 'src', 'environment', 'environment.ts');
-
-  if (!fs.existsSync(envPath)) {
-    log('[ERROR] Environment file not found', 'red');
-    return null;
-  }
-
-  const envContent = fs.readFileSync(envPath, 'utf8');
-
-  if (!envContent.includes('firebaseConfig') || !envContent.includes('projectId')) {
-    log('[ERROR] No valid Firebase config found', 'red');
-    return null;
-  }
-
-  try {
-    const configMatch = envContent.match(/firebaseConfig\s*=\s*\{([^}]+)\}/s);
-    if (!configMatch) return null;
-
-    const configString = '{' + configMatch[1] + '}';
-    const lines = configString.split('\n');
-    const config: Partial<FirebaseConfig> = {};
-
-    for (const line of lines) {
-      if (line.trim().startsWith('/*') || line.trim().startsWith('*') ||
-          line.trim().startsWith('//') || !line.includes(':')) {
-        continue;
-      }
-      const keyValueMatch = line.match(/["']?(\w+)["']?\s*:\s*["']([^"']+)["']/);
-      if (keyValueMatch) {
-        config[keyValueMatch[1] as keyof FirebaseConfig] = keyValueMatch[2];
-      }
-    }
-
-    if (!config.projectId || !config.apiKey || !config.authDomain) {
-      log('[ERROR] Incomplete Firebase config', 'red');
-      return null;
-    }
-
-    log(`[INFO] Found Firebase project: ${config.projectId}`, 'cyan');
-    return config as FirebaseConfig;
-  } catch (error) {
-    log(`[ERROR] Could not parse Firebase config: ${error}`, 'red');
-    return null;
-  }
 }
 
 function loadSampleContacts(): Contact[] {
@@ -126,10 +75,7 @@ async function migrateContacts() {
 
     for (const contact of sampleContacts) {
       const contactRef = doc(db, 'contacts', contact.id);
-      await setDoc(contactRef, {
-        ...contact,
-        createdAt: new Date()
-      });
+      await setDoc(contactRef, contact);
       console.log(\`[SUCCESS] Migrated contact: \${contact.name}\`);
     }
 
@@ -149,10 +95,8 @@ async function main(): Promise<void> {
   log('Firebase Contacts Migration', 'bright');
   log('===========================', 'blue');
 
-  const config = readFirebaseConfig();
-  if (!config) {
-    process.exit(1);
-  }
+  const config = getFirebaseConfig();
+  log(`[INFO] Using Firebase project: ${config.projectId}`, 'cyan');
 
   log('Creating migration script...', 'cyan');
   const migrationScript = createMigrationScript(config);

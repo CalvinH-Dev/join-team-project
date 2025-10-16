@@ -41,10 +41,15 @@ testem.log
 .DS_Store
 Thumbs.db
 
-/src/environment/environment.ts
+# Environment files
+.env
+.env.local
+.env.production
+.env.*.local
 /src/environment/*.backup.*
-firebase-project-info.txt
+
 # Firebase
+firebase-project-info.txt
 .firebase
 *-debug.log
 .runtimeconfig.json

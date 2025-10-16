@@ -10,9 +10,9 @@ import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { getAuth, provideAuth } from "@angular/fire/auth";
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { routes } from "@app/app.routes";
+import { firebaseConfig } from "@config/firebase.config";
 import { initializeFirestore } from "@core/initializers/firestore.initializer";
 import { FirestoreInitService } from "@core/services/firestore-init.service";
-import { firebaseConfig } from "@environments/environment";
 
 export const appConfig: ApplicationConfig = {
 	providers: [

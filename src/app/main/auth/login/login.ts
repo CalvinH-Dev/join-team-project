@@ -3,10 +3,11 @@ import { Router, RouterLink } from "@angular/router";
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import { AuthService } from "@core/services/auth-service";
 import { ToastService } from "@shared/services/toast.service";
+import { CommonModule } from "@angular/common";
 
 @Component({
 	selector: "app-login",
-	imports: [ReactiveFormsModule, RouterLink],
+	imports: [ReactiveFormsModule, RouterLink, CommonModule],
 	templateUrl: "./login.html",
 	styleUrls: ["./login.scss"],
 })
@@ -24,9 +25,11 @@ export class Login {
 	});
 
 	constructor() {
-		if (this.authService.isLoggedIn()) {
-			this.router.navigate(["/main"]);
-		}
+		this.authService.isLoggedInOnce().subscribe((isLoggedIn) => {
+			if (isLoggedIn) {
+				this.router.navigate(["/main"]);
+			}
+		});
 	}
 
 	/**
@@ -36,6 +39,7 @@ export class Login {
 		this.errorMessage = null;
 
 		if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
 			this.toastService.showError(
 				"Fehler",
 				"Bitte geben Sie eine gültige E-Mail und ein Passwort (min. 6 Zeichen) ein.",

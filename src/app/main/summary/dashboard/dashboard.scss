@@ -82,7 +82,7 @@
 			gap: 10px;
 
 			.stat-count {
-				font-size: var(--fs-count);
+				font-size: var(--fs-XL);
 				font-weight: var(--fw-semibold);
 			}
 
@@ -139,7 +139,7 @@
 		flex-shrink: 1;
 
 		.deadline-date {
-			font-size: var(--fs-deadline);
+			font-size: var(--fs-login-btn);
 			font-weight: var(--fw-bold);
 			color: #000;
 		}

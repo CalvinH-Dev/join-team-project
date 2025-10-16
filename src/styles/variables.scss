@@ -14,10 +14,11 @@ html {
 
 	/* Typography Sizes - Mobile First */
 	/* headings */
-	--fs-h1: clamp(2.938rem, 2.719rem + 1.094vw, 3.813rem);                   /* Usage  */
-	--fs-h2: clamp(1rem, 0.922rem + 0.391vw, 1.313rem);                      /* Usage  */
-	--fs-h3: clamp(1.688rem, 1.469rem + 1.094vw, 2.563rem);                 /* Usage  */
-	--fs-h4: clamp(1.5rem, 1.141rem + 1.797vw, 2.938rem);                  /* Usage  */
+
+	--fs-h1: clamp(2.938rem, 2.719rem + 1.094vw, 3.813rem);                  /* Usage  */
+	--fs-h2: clamp(1rem, 0.922rem + 0.391vw, 1.313rem);                     /* Usage  */
+	--fs-h3: clamp(1.688rem, 1.469rem + 1.094vw, 2.563rem);                /* Usage  */
+	--fs-h4: clamp(1.5rem, 1.141rem + 1.797vw, 2.938rem);                 /* Usage  */
 
 	/* text */
 	--fs-extraSmall: 14px;                                             /* Usage  */
@@ -29,7 +30,6 @@ html {
 	/* for inputs text */
 	--fs-input: clamp(1.25rem, 1.234rem + 0.078vw, 1.313rem);     /* Usage  */
 	/* for button text */
-
 	--fs-button: clamp(1.25rem, 1.234rem + 0.078vw, 1.313rem);    /* Usage  */
   --fs-login-btn: clamp(1rem, 0.922rem + 0.391vw, 1.313rem);    /* Usage  */
 
@@ -39,6 +39,7 @@ html {
 	--fs-count: clamp(2.938rem, 2.673rem + 1.327vw, 4rem);        /* Usage  */
 	/* for deadline date */
 	--fs-deadline: clamp(1rem, 0.922rem + 0.391vw, 1.313rem);     /* Usage  */
+
 
 
 	/* Font Weights */

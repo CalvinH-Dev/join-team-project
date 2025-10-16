@@ -1,0 +1,18 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+.content {
+  padding: 20px;
+  padding-bottom: 30px;
+  height: 90vh;
+  overflow-y: auto;
+
+  .headline {
+    h1 {
+      font-size: 61px;
+    }
+  }
+}

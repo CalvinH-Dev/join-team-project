@@ -36,6 +36,8 @@ html {
 	/* for greeting text */
 	--fs-greeting: clamp(2.25rem, 2.078rem + 0.86vw, 2.938rem); /* Usage  */
 
+	--stat-label: clamp(0.875rem, 0.781rem + 0.469vw, 1.25rem);
+
 	/* Font Weights */
 	--fw-regular: 400;
 	--fw-medium: 500;

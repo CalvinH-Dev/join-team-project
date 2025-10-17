@@ -1,5 +1,11 @@
 @use "../../../../styles/mixins";
 
+button {
+	border: none;
+	background: none;
+	cursor: pointer;
+}
+
 .container {
 	height: 100%;
 	width: 100%;

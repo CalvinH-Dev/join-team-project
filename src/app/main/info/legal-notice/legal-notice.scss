@@ -74,4 +74,18 @@
 			margin-bottom: 3rem;
 		}
 	}
+
+	.back-arrow {
+		display: none;
+	}
+}
+
+.back-arrow {
+	background: none;
+	border: none;
+	padding: 0;
+	position: fixed;
+	right: 15px;
+	top: 15%;
+	cursor: pointer;
 }

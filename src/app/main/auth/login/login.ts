@@ -27,7 +27,7 @@ export class Login {
 	constructor() {
 		this.authService.isLoggedInOnce().subscribe((isLoggedIn) => {
 			if (isLoggedIn) {
-				this.router.navigate(["/main"]);
+				this.router.navigate(["summary"]);
 			}
 		});
 	}

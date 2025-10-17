@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { CanActivateChildFn, Router, UrlTree } from "@angular/router";
 import { AuthService } from "@core/services/auth-service";
-import { map, Observable } from "rxjs"; 
+import { map, Observable } from "rxjs";
 
 /**
  * Route Guard zum Schutz der Kinderrouten des Main-Moduls.
@@ -22,6 +22,7 @@ export const authGuard: CanActivateChildFn = (
 	// 2. Prüfe den Anmeldestatus mithilfe des dedizierten Once-Observables
 	return authService.isLoggedInOnce().pipe(
 		map((isLoggedIn) => {
+       console.log(isLoggedIn);
 			if (isLoggedIn) {
 				// Angemeldet: Erlaube den Zugriff
 				return true;

@@ -1,23 +1,23 @@
-import { Injectable, OnDestroy, inject, signal } from "@angular/core";
+import { inject, Injectable, OnDestroy, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { from, Observable } from "rxjs";
-import { take, tap, map } from "rxjs/operators";
+import { map, take, tap } from "rxjs/operators";
 
 import {
 	Auth,
 	authState,
-	UserCredential,
-	createUserWithEmailAndPassword,
-	updateProfile,
-	signInWithEmailAndPassword,
-	signInAnonymously,
-	signOut,
-	setPersistence,
 	browserSessionPersistence,
+	createUserWithEmailAndPassword,
+	setPersistence,
+	signInAnonymously,
+	signInWithEmailAndPassword,
+	signOut,
+	updateProfile,
+	UserCredential,
 } from "@angular/fire/auth";
 
-import { ToastService } from "@shared/services/toast.service";
 import { AppUser } from "@core/interfaces/user";
+import { ToastService } from "@shared/services/toast.service";
 
 @Injectable({
 	providedIn: "root",
@@ -64,7 +64,6 @@ export class AuthService implements OnDestroy {
 		const promise = createUserWithEmailAndPassword(this.firebaseAuth, email, password).then(
 			(userCredential: UserCredential) => {
 				if (userCredential.user && displayName) {
-          console.log("SignUpTest");
 					return updateProfile(userCredential.user, { displayName: displayName });
 				}
 				return Promise.resolve();
@@ -83,11 +82,6 @@ export class AuthService implements OnDestroy {
 	signIn(email: string, password: string): Observable<void> {
 		const promise = setPersistence(this.firebaseAuth, browserSessionPersistence)
 			.then(() => {
-				// Existing and future Auth states are now persisted in the current
-				// session only. Closing the window would clear any existing state even
-				// if a user forgets to sign out.
-				// ...
-				// New sign-in will be persisted with session persistence.
 				return signInWithEmailAndPassword(this.firebaseAuth, email, password);
 			})
 			.catch((error) => {
@@ -130,5 +124,7 @@ export class AuthService implements OnDestroy {
 		);
 	}
 
-	ngOnDestroy() {}
+	ngOnDestroy() {
+		this.signOut();
+	}
 }

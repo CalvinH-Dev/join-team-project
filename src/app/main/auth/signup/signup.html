@@ -180,7 +180,6 @@
 						class="signup-button"
 						[disabled]="signupForm.invalid || isLoading"
 						[class.inactive-text]="signupForm.invalid"
-						(click)="onSignUp()"
 					>
 						<!-- Ladezustand anzeigen -->
 						{{ isLoading ? "Registriere..." : "Sign up" }}

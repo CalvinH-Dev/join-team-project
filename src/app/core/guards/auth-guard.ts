@@ -22,7 +22,6 @@ export const authGuard: CanActivateChildFn = (
 	// 2. Prüfe den Anmeldestatus mithilfe des dedizierten Once-Observables
 	return authService.isLoggedInOnce().pipe(
 		map((isLoggedIn) => {
-       console.log(isLoggedIn);
 			if (isLoggedIn) {
 				// Angemeldet: Erlaube den Zugriff
 				return true;

@@ -97,8 +97,26 @@ export class AuthService implements OnDestroy {
 				return signInWithEmailAndPassword(this.firebaseAuth, email, password);
 			})
 			.catch((error) => {
-				// Handle Errors here.
-				console.error(error);
+				console.error("Firebase Sign-In Error:", error);
+
+				if (
+					error.code === "auth/invalid-credential" ||
+					error.code === "auth/user-not-found" ||
+					error.code === "auth/wrong-password"
+				) {
+					this.toastService.showError(
+						"Invalid login credentials.",
+						"Please check your email and password.",
+					);
+				} else {
+					// Generische Fehlermeldung für andere, unerwartete Fehler (z.B. Netzwerk)
+					this.toastService.showError(
+						"An unexpected error occurred.",
+						"Please try again later.",
+					);
+				}
+
+				throw error;
 			});
 
 		return from(promise).pipe(

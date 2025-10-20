@@ -84,7 +84,7 @@ export class AuthService implements OnDestroy {
 
 		return from(promise).pipe(
 			tap(() => {
-				this.toastService.showSuccess("Registrierung erfolgreich", "Willkommen an Bord!");
+				this.toastService.showSuccess("Registration successful", "Welcome aboard!");
 				this.router.navigate(["/login"]);
 			}),
 			map(() => undefined as void),
@@ -103,7 +103,7 @@ export class AuthService implements OnDestroy {
 
 		return from(promise).pipe(
 			tap(() => {
-				this.toastService.showSuccess("Anmeldung erfolgreich", "Sie sind jetzt eingeloggt.");
+				this.toastService.showSuccess("Login successful", "You are now logged in.");
 				this.router.navigate(["/summary"]);
 			}),
 			map(() => undefined as void),
@@ -115,7 +115,7 @@ export class AuthService implements OnDestroy {
 
 		return from(promise).pipe(
 			tap(() => {
-				this.toastService.showInfo("Gast-Login", "Sie sind jetzt als Gast angemeldet.");
+				this.toastService.showInfo("Guest Login", "You are now logged in as a guest.");
 				this.router.navigate(["/summary"]);
 			}),
 			map(() => undefined as void),
@@ -127,7 +127,7 @@ export class AuthService implements OnDestroy {
 
 		return from(promise).pipe(
 			tap(() => {
-				this.toastService.showInfo("Abmeldung", "Sie wurden erfolgreich abgemeldet.");
+				this.toastService.showInfo("Logout", "You have been successfully logged out.");
 			}),
 			map(() => {
 				this.router.navigate(["/login"]);

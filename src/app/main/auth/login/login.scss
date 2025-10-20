@@ -15,8 +15,15 @@ body {
 	align-items: center;
 }
 
+form {
+	display: flex;
+	flex-direction: column;
+	row-gap: 2rem;
+}
 
 .error-message {
+	position: absolute;
+	top: 100%;
 	font-size: 14px;
 	color: red;
 	margin-top: 4px;
@@ -173,7 +180,7 @@ body {
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		gap: 20px;
+		gap: 3lh;
 		margin-bottom: 24px;
 		width: 100%;
 

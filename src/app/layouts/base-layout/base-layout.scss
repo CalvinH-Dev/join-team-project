@@ -9,9 +9,9 @@ main {
 	@include mixins.desktop {
 		padding-left: var(--footer-width-desktop);
 		padding-bottom: revert;
-		max-width: calc(1600px - var(--footer-width-desktop));
+		max-width: 1600px;
 		display: flex;
-		justify-content: start;
-		align-items: start;
+		justify-content: center;
+		align-items: center;
 	}
 }

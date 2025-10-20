@@ -29,7 +29,7 @@
 	animation: fadeOutGreeting 3s forwards;
 	padding: 12px;
 	box-sizing: border-box;
-	background-color: var(--bg-color-white);
+	background-color: var(--bg-color-gray);
 }
 
 @include mixins.desktop {

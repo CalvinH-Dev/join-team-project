@@ -60,6 +60,7 @@ form {
 		left: 50%;
 		transform: scale(1) translate(-50%, -50%);
 	}
+
 	100% {
 		top: calc(env(safe-area-inset-top, 0px) + 18px);
 		left: calc(env(safe-area-inset-left, 0px) + 18px);
@@ -72,6 +73,7 @@ form {
 		opacity: 1;
 		visibility: visible;
 	}
+
 	100% {
 		opacity: 0;
 		visibility: hidden;
